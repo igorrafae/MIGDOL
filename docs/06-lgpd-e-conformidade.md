@@ -8,6 +8,21 @@
 
 ---
 
+## 0. Premissa institucional
+
+**A instituição é a controladora e assume a responsabilidade pela privacidade dos usuários.** O projeto não usa a privacidade do usuário como motivo para deixar de oferecer um mecanismo de segurança, monitoramento ou atribuição, desde que o mecanismo tenha base legal e finalidade escritas pela instituição.
+
+Os limites que **permanecem** não vêm da privacidade, e sim de quatro motivos práticos:
+
+1. **Segurança operacional.** Todo dado coletado sobre agentes (imagem, posição, quem leu o quê) é alvo. Um banco com rostos e trajetos da equipe é o que o adversário mais quer, e pode custar integridade física. Por isso o que se coleta é **cifrado, com acesso restrito e prazo**, mesmo quando a coleta é permitida.
+2. **Validade jurídica e probatória.** Prova obtida sem base legal, sem ciência prévia ou sem rito pode ser anulada num procedimento disciplinar ou penal. Transparência (seção 7) e rito (doc 05 seção 3.4) protegem a **própria apuração**.
+3. **Obrigações da instituição** que existem independentemente do projeto (seção 1, **[validar]**).
+4. **Terceiros no quadro ou nas conversas** (investigados, passantes), que não são usuários e não consentem.
+
+Onde antes o texto dizia "evitar por privacidade", leia-se agora "decidir pela instituição, com os controles acima".
+
+---
+
 ## 1. Enquadramento
 
 ### 1.1 Dois grupos de titulares, dois regimes possíveis
@@ -60,6 +75,8 @@ Preencher e manter atualizado. Base legal e retenção são **propostas** a vali
 | Metadados de mensagens (room_id aleatório, horários, volume) | A (e indiretamente B) | Entrega e operação | Execução de política pública | Backend, fila temporária | Até entrega ou 72 h | Sistema |
 | Conteúdo das mensagens, fotos, anexos | B (e A) | Coordenação de atividade de inteligência | Atividade de investigação / legislação específica **[validar]** | Aparelhos, cache cifrado; fila cifrada | Política da operação (ex.: 24 h, 7 dias) | Membros da sala |
 | OCR, trechos, vetores | B | Busca e apoio | Idem | Banco da IA, cifrado | Igual à operação | Nó de IA |
+| Imagem da câmera frontal (detecção de presença e de câmera apontada) | A e terceiros no quadro | Segurança contra fotografia da tela | Processada em memória; **não persistida**; só evento (doc 07 seção 6) | Evento: **a definir** | Segurança, Auditor |
+| Eventos de local (zona) e série atestada | A | Controle de aparelho e local autorizados | Sem coordenadas; retenção curta (doc 07 seções 3 e 4) | **A definir** | Segurança, Auditor |
 | Relatórios de IA | B | Apoio à decisão | Idem | Cache do administrador | Igual à operação | Administrador |
 
 Dado pessoal sensível (art. 5º, II) pode aparecer no conteúdo (origem racial, saúde, biometria de investigados etc.); o sistema **não classifica** o conteúdo, e por isso trata tudo como sigiloso por padrão.
@@ -132,6 +149,7 @@ O texto de convite e a norma de uso devem informar, **antes do primeiro uso**:
 3. Que há **nó de IA** na sala e que o administrador pode pedir análise do conteúdo (já previsto).
 4. Que há **trilha de auditoria** de metadados e quem pode consultá-la.
 5. Que o **registro de visualização** existe, se for adotado (doc 05 seção 3.3).
+   Que a **câmera frontal** é usada durante a leitura para detectar ausência, terceiros e câmera apontada, sem gravar imagem, e que há controle de **local** nas salas que o exigem (doc 07).
 6. Em que situações a **identidade real** pode ser vinculada ao codinome e por qual rito.
 7. Quanto tempo cada dado é guardado.
 8. Como falar com o encarregado.

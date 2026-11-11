@@ -50,6 +50,8 @@ Limite declarado: foto da tela por outro aparelho e memorização não são impe
 
 ### 3.2 Técnicas adicionais (decisão D-R3 do documento 04)
 
+Nota: a instituição assume a responsabilidade pela privacidade (doc 06 seção 0). As ressalvas abaixo são de **integridade do conteúdo e validade da prova**, não de privacidade.
+
 | Técnica | Como funciona | Vantagem | Custo e risco |
 |---|---|---|---|
 | **Variação de texto por destinatário** | Mensagens marcadas como sensíveis pelo administrador chegam com pequenas diferenças invisíveis ou quase (pontuação, espaços, ordem de itens equivalentes), distintas por aparelho | Identifica quem vazou **texto copiado** | Altera o conteúdo entregue; pode introduzir ambiguidade; **proibido** em ordem, endereço, valor ou dado em que a exatidão importe; o usuário deve ser informado de que o recurso existe |
@@ -60,14 +62,15 @@ Limite declarado: foto da tela por outro aparelho e memorização não são impe
 
 Recomendação para a v1: **marca visível + invisível, registro de visualização, compartimentação e janelas de leitura**. Variação textual e informação-isca ficam para decisão do comitê, após parecer jurídico.
 
-### 3.3 Registro de visualização
+### 3.3 Registro de visualização (adotado)
 
-Proposta: o aparelho registra localmente que exibiu a mensagem ou anexo `X` e envia ao servidor, **cifrado para o Auditor** (não para o administrador da operação), um recibo `(id da mensagem, aparelho, hora)`. O servidor não lê o recibo. Uso restrito ao rito da seção 3.4.
+O aparelho registra localmente que exibiu a mensagem ou anexo `X` e envia ao servidor, **cifrado para o Auditor** (não para o administrador da operação), um recibo `(id da mensagem, aparelho, hora)`. O servidor não lê o recibo. Uso restrito ao rito da seção 3.4.
 
-Trade-offs:
-- Aumenta a capacidade de atribuição.
-- Gera dado pessoal comportamental (quem leu o quê e quando). Precisa constar no RIPD (documento 06) e na transparência aos usuários.
-- Retenção curta (proposta: igual à da operação, mais prazo de apuração).
+Pontos de projeto:
+- Aumenta a capacidade de atribuição; é adotado pela decisão da instituição (doc 06 seção 0).
+- É um dado de alto valor para o adversário (revela quem leu o quê): fica cifrado para o Auditor e fora do alcance do administrador de infraestrutura.
+- Consta no RIPD e na transparência aos usuários, para proteger a validade da apuração.
+- Retenção: igual à da operação mais o prazo de apuração.
 
 ### 3.4 Quebra de pseudonimato (decisão D-R2)
 

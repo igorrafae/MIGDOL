@@ -88,6 +88,7 @@ O registro vive em `docs/riscos/registro.md` (ou ferramenta da instituição) e 
 | **D-R3** | Variação de conteúdo por destinatário (rastreamento textual) | Ajuda a achar quem vazou texto copiado, mas altera o conteúdo entregue. Ver documento 05, seção 3.2 |
 | **D-R4** | Retenção da trilha de auditoria e dos logs de integridade | Conflito possível entre minimização (LGPD) e controle. Ver documento 06 |
 | **D-R5** | Conflito entre expurgo e dever de guarda documental | Jurídico precisa decidir o que pode ser destruído. Ver documento 06 |
+| **D-R6 a D-R13** | Câmera, local, coação, triagem de spyware, atestação, pós-quântico, check-in | Ver documento 07 seção 13; riscos R45–R56 no documento 07 seção 10 |
 
 ---
 

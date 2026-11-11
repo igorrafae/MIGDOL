@@ -53,7 +53,7 @@ Probabilidade (P) e impacto (I): Baixo / Médio / Alto / Crítico. A coluna "Res
 | R02 | Captura ou gravação de tela no próprio aparelho | Alto | Alto | `FLAG_SECURE`, detecção de projeção, MDM | Baixo |
 | R03 | Espelhamento por cabo (scrcpy) ou depuração | Médio | Alto | Bloqueio com ADB ativo; MDM desativa depuração; atestação | Baixo |
 | R04 | App de acesso remoto ou serviço de acessibilidade lê a tela | Médio | Crítico | Lista de permitidos; lista de apps do MDM; verificação periódica | Baixo |
-| R05 | Aparelho com root ou sistema adulterado | Médio | Crítico | Atestação de hardware validada no servidor; Play Integrity | Baixo |
+| R05 | Aparelho com root ou sistema adulterado | Médio | Crítico | Atestação de hardware validada no servidor (sem Play Integrity, doc 07) | Baixo |
 | R06 | Instrumentação do app (Frida) para extrair texto | Baixo | Crítico | Detecção no núcleo nativo; ofuscação; verificação de assinatura do app | Médio |
 | R07 | Aparelho perdido com sessão ativa | Médio | Alto | Bloqueio por biometria e inatividade; lease de 12 h; revogação remota | Baixo |
 | R08 | Extração forense do armazenamento do aparelho | Baixo | Alto | SQLCipher com chave dividida; nada fora do app; sem backup | Baixo |
@@ -301,6 +301,18 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 - [ ] Prazos de correção de vulnerabilidade definidos e aprovados
 - [ ] Revogação por desligamento testada (≤ 4 h úteis)
 
+### 4.11 Aparelho, local, câmera e clonagem
+
+- [ ] Estação de preparação com processo escrito e registro de quem preparou
+- [ ] Triagem de spyware executada em todo aparelho antes do cadastro; relatório anexado
+- [ ] Série atestada conferida com o inventário (A31–A32)
+- [ ] Atestação sem Play Integrity, com raízes de confiança mantidas internamente (ADR-0002)
+- [ ] Cenários A25–A50 aprovados; A38, A39 e A42 documentados como limites
+- [ ] Câmera: sem alerta nada é gravado ou enviado; com alerta só evidência cifrada ao Auditor (A43)
+- [ ] Perfis de local definidos por sala e testados (A33–A37)
+- [ ] Modo de coação aprovado, treinado e com destinatário do alerta definido
+- [ ] Decisões D-R6 a D-R13 do documento 07 tomadas
+
 ### 4.10 LGPD
 
 Ver checklist completo no documento 06, seção 13. Todos os itens são condição para o parecer de homologação.
@@ -423,6 +435,7 @@ Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
 - docs/04-gestao-de-riscos.md
 - docs/05-vazamentos-incidentes-e-atribuicao.md
 - docs/06-lgpd-e-conformidade.md
+- docs/07-resistencia-a-clonagem-e-endurecimento-avancado.md
 
 ## Regras que não podem ser quebradas
 1. Nenhuma primitiva ou protocolo criptográfico é implementado à mão.
@@ -444,6 +457,10 @@ Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
     erro, push ou IA de terceiros. Dado pessoal de usuário só por rito documentado (docs/06).
 11. Nenhuma decisão contra pessoa é tomada automaticamente a partir de IA, marca d'água
     ou integridade (docs/05). Mudança que altere o perfil de risco atualiza docs/04.
+12. Câmera: sem alerta, nenhum quadro é gravado nem enviado; com alerta, só imagens de evidência
+    cifradas para o Auditor (docs/07). Atestação sem Play Integrity nem serviço de terceiro.
+13. A instituição assume a privacidade dos usuários (docs/06 seção 0). Todo dado coletado sobre
+    agentes é cifrado, com acesso por rito e prazo, por segurança operacional.
 
 ## Como trabalhar
 - Uma fase do roteiro por vez (docs/03, seção 5). Não adiantar fases.

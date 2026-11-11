@@ -7,6 +7,7 @@
 - docs/04-gestao-de-riscos.md
 - docs/05-vazamentos-incidentes-e-atribuicao.md
 - docs/06-lgpd-e-conformidade.md
+- docs/07-resistencia-a-clonagem-e-endurecimento-avancado.md
 
 Cada componente (app/, core/, server/, ai-node/, admin-panel/, deploy/, tests/) tem um CLAUDE.md local com fronteiras e fase. Leia o do componente antes de mexer nele.
 
@@ -30,6 +31,10 @@ Cada componente (app/, core/, server/, ai-node/, admin-panel/, deploy/, tests/) 
     erro, push ou IA de terceiros. Dado pessoal de usuário só por rito documentado (docs/06).
 11. Nenhuma decisão contra pessoa é tomada automaticamente a partir de IA, marca d'água
     ou integridade (docs/05). Mudança que altere o perfil de risco atualiza docs/04.
+12. Câmera: sem alerta, nenhum quadro é gravado nem enviado; com alerta, só imagens de evidência
+    cifradas para o Auditor (docs/07). Atestação sem Play Integrity nem serviço de terceiro.
+13. A instituição assume a privacidade dos usuários (docs/06 seção 0). Todo dado coletado sobre
+    agentes é cifrado, com acesso por rito e prazo, por segurança operacional.
 
 ## Como trabalhar
 - Uma fase do roteiro por vez (docs/03, seção 5). Não adiantar fases.

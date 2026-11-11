@@ -507,7 +507,7 @@ Verificações (Kotlin), com a fonte de cada sinal:
 | Depuração USB / sem fio | `Settings.Global.ADB_ENABLED`, `adb_wifi_enabled` | Bloqueia |
 | Opções de desenvolvedor | `Settings.Global.DEVELOPMENT_SETTINGS_ENABLED` | Bloqueia |
 | App depurável ou depurador ligado | `ApplicationInfo.FLAG_DEBUGGABLE`, `Debug.isDebuggerConnected()` | Encerra |
-| Root / bootloader | Atestação de chave (estado do boot verificado) + Play Integrity, **validados no servidor** | Bloqueia cadastro e sessão |
+| Root / bootloader | Atestação de chave (estado do boot verificado), **validada no servidor**. Play Integrity **não** é usado (docs/07 seção 8; ADR-0002 proposta) | Bloqueia cadastro e sessão |
 | Instrumentação (Frida, Xposed) | Varredura de bibliotecas carregadas e portas conhecidas, feita no núcleo nativo | Encerra |
 | Emulador | Propriedades de build + ausência de atestação de hardware | Bloqueia |
 | Serviços de acessibilidade | `AccessibilityManager.getEnabledAccessibilityServiceList`, comparado a lista permitida | Bloqueia se fora da lista |
