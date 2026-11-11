@@ -1,7 +1,7 @@
 # 03 — Segurança, Homologação e Roteiro de Entrega
 
-**Projeto:** Mensageiro Tático (nome provisório)
-**Versão do documento:** 0.1 — rascunho para validação
+**Projeto:** MIGDOL
+**Versão do documento:** 0.2 — rascunho para validação
 **Público:** área de segurança da instituição, equipe de pentest, equipe de desenvolvimento
 
 ---
@@ -300,7 +300,8 @@ Cada fase termina com algo demonstrável e com critérios de aceite verificávei
 | Spike de atestação | Servidor valida a cadeia de um aparelho real e recusa emulador e aparelho com root |
 | Spike de inferência | Qwen quantizado, BGE-M3 e PaddleOCR rodando juntos no hardware disponível, com memória e tempos medidos |
 | Comparação construir × adaptar | Uma página com a decisão |
-| Repositório, integração contínua, padrões de código | Build e testes automáticos de `app`, `core`, `server`, `ai-node` |
+| Repositório, integração contínua, padrões de código | Build e testes automáticos de `app`, `core`, `server`, `ai-node`; `scripts/check-boundaries.sh` na integração contínua |
+| Esqueleto modular do `server/` (já criado) | Cinco módulos compilam; grafo de dependências verificado |
 | Pontos em aberto do documento 01 respondidos | Registrados |
 
 ### Fase 1 — Mensagens de texto ponta a ponta
@@ -407,12 +408,15 @@ Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
 6. Verificação de assinatura vem antes de qualquer gravação de estado.
 7. ai-node/ não grava arquivo em claro e não abre conexão de saída.
 8. Dependência nova exige justificativa no PR e versão fixada com hash.
+9. server/ é monólito modular: serviços só se falam por api/, sem importar internal/
+   de outro serviço, sem consultar tabela alheia e sem FK entre serviços.
+   Rode scripts/check-boundaries.sh antes de commitar mudanças no server/.
 
 ## Como trabalhar
 - Uma fase do roteiro por vez (docs/03, seção 5). Não adiantar fases.
 - Cada entrega vem com teste automatizado ligado ao critério de aceite.
 - Cenários de docs/03 seção 3 viram testes em tests/security quando automatizáveis.
-- Mudança que contrarie um ADR de docs/02 seção 11 exige novo ADR antes do código.
+- Mudança que contrarie um ADR de docs/02 seção 11 ou de docs/adr exige novo ADR antes do código.
 - Em dúvida sobre segurança, escolher a opção mais restritiva e registrar a dúvida.
 ```
 

@@ -1,0 +1,11 @@
+go 1.27.0
+
+use (
+	./cmd/server
+	./platform
+	./services/audit
+	./services/blobs
+	./services/delivery
+	./services/directory
+	./services/gateway
+)

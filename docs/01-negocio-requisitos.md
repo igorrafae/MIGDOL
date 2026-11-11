@@ -1,10 +1,12 @@
 # 01 — Negócio e Requisitos
 
-**Projeto:** Mensageiro Tático (nome provisório)
-**Versão do documento:** 0.1 — rascunho para validação
+**Projeto:** MIGDOL
+**Versão do documento:** 0.2 — rascunho para validação
 **Público:** patrocinador do projeto, chefia da unidade de inteligência, jurídico/corregedoria, equipe de desenvolvimento
 
 > Documentos relacionados: `02-arquitetura-engenharia.md` (como construir) e `03-seguranca-homologacao-roadmap.md` (como provar que está seguro e em que ordem entregar).
+
+**Sobre o nome.** MIGDOL (hebraico: "torre") vem de Provérbios 18:10, "Torre Forte". O nome remete a firmeza e proteção, adequado a um ambiente policial e operacional.
 
 ---
 
@@ -36,6 +38,7 @@
 | D7 | Expurgo por **destruição de chaves** (crypto-shredding), não só por exclusão de registros | Exclusão em banco deixa resíduos em disco, WAL e backups |
 | D8 | **Trilha de auditoria selada de metadados** (sem conteúdo) | Sem ela, corregedoria e jurídico tendem a barrar a homologação |
 | D9 | PostgreSQL como único banco; sem OpenSearch | Menos componentes dentro do perímetro |
+| D10 | Backend como monólito modular, com serviços já separados em módulos e prontos para virar microsserviços | Baixo custo operacional agora, sem reescrita depois (docs/adr/0001) |
 
 ---
 

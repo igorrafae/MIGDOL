@@ -1,7 +1,7 @@
 # 02 — Arquitetura e Engenharia
 
-**Projeto:** Mensageiro Tático (nome provisório)
-**Versão do documento:** 0.1 — rascunho para validação
+**Projeto:** MIGDOL
+**Versão do documento:** 0.2 — rascunho para validação
 **Público:** equipe de desenvolvimento e revisores de segurança
 
 > Este documento substitui os trechos de código dos rascunhos anteriores. A seção 12 lista o que foi corrigido e por quê. Versões de bibliotecas devem ser confirmadas na Fase 0; nada aqui foi compilado ou testado ainda.
@@ -285,13 +285,28 @@ Limite conhecido: memória de processo em Go, Python e JavaScript não pode ser 
 | **Anexos** | Emite URLs temporárias, controla cota e expiração | Não tem chaves |
 | **Auditoria** | Grava eventos em cadeia de hash; serve o perfil Auditor | Não recebe conteúdo |
 
-Na v1 podem ser módulos de um único binário, com fronteiras de pacote claras. Separar em processos quando houver necessidade operacional.
+Na v1 rodam num único binário, mas cada serviço é um **módulo Go independente** (ADR-11): contrato público em `api/`, implementação em `internal/`, tabelas e migrações próprias. Os serviços só se falam por contrato, segundo um grafo fixo:
+
+| Serviço | Pode depender de |
+|---|---|
+| audit | — |
+| directory | audit |
+| delivery | directory, audit |
+| blobs | directory |
+| gateway | directory, delivery |
+
+`scripts/check-boundaries.sh` verifica o grafo. Separar em processos quando houver necessidade operacional, seguindo `docs/MIGRACAO-MICROSSERVICOS.md`.
 
 ### 7.2 Estrutura do repositório
 
 ```
-mensageiro-tatico/
+MIGDOL/
+├── CLAUDE.md                 # regras do projeto (+ um CLAUDE.md por componente)
 ├── docs/
+│   ├── adr/                  # decisões novas (ADR-0001 em diante)
+│   └── MIGRACAO-MICROSSERVICOS.md
+├── scripts/
+│   └── check-boundaries.sh   # verifica o grafo de dependências do server/
 ├── app/                      # React + Capacitor
 │   ├── src/
 │   └── android/
@@ -300,15 +315,15 @@ mensageiro-tatico/
 │           ├── camera/
 │           └── viewer/
 ├── core/                     # Rust: MLS, cifra de anexos, cache
-├── server/                   # Go
-│   ├── cmd/server/
-│   └── internal/
+├── server/                   # Go: monólito modular (go.work)
+│   ├── cmd/server/           # composição: liga implementações aos contratos
+│   ├── platform/ids/         # único código compartilhado (identificadores)
+│   └── services/
 │       ├── gateway/
 │       ├── delivery/
 │       ├── directory/
 │       ├── blobs/
-│       ├── audit/
-│       └── store/
+│       └── audit/            # cada serviço: api/, internal/, migrations/, go.mod, CLAUDE.md
 ├── ai-node/                  # Python + cliente Rust
 │   ├── client/
 │   ├── ocr/
@@ -334,7 +349,8 @@ mensageiro-tatico/
 ### 7.4 Entrega: esqueleto
 
 ```go
-// Estrutura ilustrativa — não é código final.
+// Estrutura ilustrativa — não é código final. No código real, `dir` é a interface
+// directory/api.Directory e a fila pertence ao pacote delivery (ADR-11).
 type Room struct {
     mu      sync.RWMutex
     members map[DeviceID]*Conn
@@ -367,6 +383,14 @@ Diferenças em relação ao rascunho anterior: há salas, há autorização por 
 
 ```sql
 -- Sem conteúdo em claro em nenhuma tabela.
+-- Cada serviço é dono das suas tabelas (migrations/ do serviço):
+--   directory: users, devices, rooms, memberships, key_packages
+--   delivery:  outbox, outbox_pending
+--   blobs:     blobs
+--   audit:     audit_log
+-- Não há chave estrangeira entre serviços: room_id em outbox e blobs é uuid simples,
+-- e o expurgo limpa por chamada ou evento, não por ON DELETE CASCADE (ADR-11).
+-- Os trechos abaixo mantêm as REFERENCES entre tabelas do mesmo serviço apenas.
 CREATE TABLE users (
     user_id      uuid PRIMARY KEY,
     registration text NOT NULL UNIQUE,      -- matrícula
@@ -411,7 +435,7 @@ CREATE TABLE key_packages (
 
 CREATE TABLE outbox (
     msg_id     uuid PRIMARY KEY,
-    room_id    uuid NOT NULL REFERENCES rooms ON DELETE CASCADE,
+    room_id    uuid NOT NULL,           -- sem FK: pertence ao diretório
     envelope   bytea NOT NULL,
     expires_at timestamptz NOT NULL
 );
@@ -423,7 +447,7 @@ CREATE TABLE outbox_pending (
 
 CREATE TABLE blobs (
     object_key text PRIMARY KEY,            -- aleatório
-    room_id    uuid NOT NULL REFERENCES rooms ON DELETE CASCADE,
+    room_id    uuid NOT NULL,           -- sem FK: pertence ao diretório
     size_bytes bigint NOT NULL,
     expires_at timestamptz NOT NULL
 );
@@ -659,6 +683,7 @@ Mantém-se do rascunho anterior: rede interna sem rota externa, raiz somente lei
 | ADR-08 | Ordem de expurgo em binário com contador | JSON assinado + cache de nonces | Formato próprio a documentar e testar |
 | ADR-09 | Auditoria de metadados encadeada | Nenhum registro | Existe prova de que a operação existiu |
 | ADR-10 | Anexos cifrados no cliente | Cifra no servidor de objetos | Servidor não gera miniaturas |
+| ADR-11 | Monólito modular: um módulo Go por serviço, contratos em `api/`, dados e migrações próprios, sem FK entre serviços (docs/adr/0001) | Pacotes num só módulo; microsserviços desde já | Cerimônia de contratos; limpeza de expurgo explícita; separação futura sem reescrita |
 
 ---
 
@@ -681,3 +706,4 @@ Mantém-se do rascunho anterior: rede interna sem rota externa, raiz somente lei
 | "Zero-fill" em Python e Go | Não é garantido com coletor de lixo | Chaves no núcleo Rust; reinício do nó após expurgo |
 | MinIO com SSE-KMS como proteção | Chave fica no servidor | Cifra no cliente (5.4) |
 | PWA | Não atende aos requisitos de aparelho | App nativo |
+| Esquema único do backend (7.5) com FK entre tabelas de serviços diferentes | Impede separar bancos | Tabelas por serviço, sem FK entre serviços (ADR-11) |
