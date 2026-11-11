@@ -113,10 +113,13 @@ sequenceDiagram
   G->>S: registra matrícula + codinome
   S-->>G: QR de uso único (token, validade 5 min, impressão digital do servidor)
   A->>A: lê o QR presencialmente
+  Note over G,A: agente assina o Termo de Ciência e Autorização no gov.br, na presença do gestor
+  G->>S: PDF assinado (sem codinome nem dado do aparelho)
+  S->>S: valida assinatura, nível, versão e resumo do termo
   A->>H: gera chave de identidade com desafio = token
   H-->>A: cadeia de atestação
   A->>S: token + atestação + pedido de certificado + pacotes de chave MLS
-  S->>S: valida cadeia, estado do boot, patch, MDM
+  S->>S: valida cadeia, estado do boot, patch, MDM e termo vigente
   alt aprovado
     S-->>A: certificado de cliente + parte da chave do cache
     S->>S: audita "aparelho ativado"
@@ -384,7 +387,7 @@ Diferenças em relação ao rascunho anterior: há salas, há autorização por 
 ```sql
 -- Sem conteúdo em claro em nenhuma tabela.
 -- Cada serviço é dono das suas tabelas (migrations/ do serviço):
---   directory: users, devices, rooms, memberships, key_packages
+--   directory: users, devices, rooms, memberships, key_packages, terms, term_acceptances
 --   delivery:  outbox, outbox_pending
 --   blobs:     blobs
 --   audit:     audit_log
@@ -406,7 +409,7 @@ CREATE TABLE devices (
     cert_fpr      bytea NOT NULL UNIQUE,
     attestation   jsonb NOT NULL,           -- resumo validado, sem segredos
     lease_until   timestamptz,
-    status        text NOT NULL,            -- active | suspended | revoked
+    status        text NOT NULL,            -- pending_term | active | suspended | revoked
     last_seen_at  timestamptz
 );
 
@@ -432,6 +435,24 @@ CREATE TABLE key_packages (
     package    bytea NOT NULL,
     claimed_at timestamptz
 );
+
+-- Termo de Ciência e Autorização (dono: directory). Ver docs/anexos e docs/06 seção 7.
+CREATE TABLE terms (
+    version      text PRIMARY KEY,
+    text_sha256  bytea NOT NULL,
+    published_at timestamptz NOT NULL,
+    retired_at   timestamptz
+);
+CREATE TABLE term_acceptances (
+    user_id       uuid NOT NULL REFERENCES users,
+    version       text NOT NULL REFERENCES terms,
+    signed_sha256 bytea NOT NULL,           -- hash do PDF assinado (o PDF fica em guarda segura)
+    signer_level  text NOT NULL,            -- avançada | qualificada
+    signed_at     timestamptz NOT NULL,
+    validated_at  timestamptz NOT NULL,
+    PRIMARY KEY (user_id, version)
+);
+-- Estado do aparelho: pending_term (aguardando termo) | active | suspended | revoked.
 
 CREATE TABLE outbox (
     msg_id     uuid PRIMARY KEY,

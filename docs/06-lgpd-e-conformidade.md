@@ -154,6 +154,15 @@ O texto de convite e a norma de uso devem informar, **antes do primeiro uso**:
 7. Quanto tempo cada dado é guardado.
 8. Como falar com o encarregado.
 
+**Como a ciência é registrada:** o agente assina o **Termo de Ciência e Autorização de Acesso** (docs/anexos/termo-de-ciencia-e-autorizacao.md) pelo **gov.br**, na presença do gestor, no momento do cadastro. A ativação do aparelho depende de assinatura válida da **versão vigente**. Nova versão = nova assinatura; sem ela o acesso é suspenso.
+
+Cuidados de desenho:
+- O termo **não leva codinome nem identificador de aparelho**; quem liga o termo ao usuário é a referência interna no diretório (R58, R40).
+- Nenhum dado operacional vai ao gov.br: apenas o termo genérico, a matrícula e o CPF para a assinatura.
+- O texto **não detalha** métodos, limiares ou respostas de detecção; descreve categorias. Detalhe técnico ajuda o adversário.
+- A assinatura é validada pelo servidor (ou na estação do gestor) contra a cadeia de confiança aplicável, sem depender de consulta externa em tempo de uso.
+- Nível da assinatura (avançada ou qualificada) e valor jurídico: **[validar]** (Lei 14.063/2020 e norma de assinaturas eletrônicas na administração pública).
+
 Ciência do usuário **não substitui a base legal** e não deve ser tratada como consentimento livre, dada a relação funcional **[validar]**.
 
 ---
@@ -238,6 +247,7 @@ O resultado entra no RIPD e é revisto a cada mudança.
 | RL07 | Nenhuma decisão sobre pessoa tomada automaticamente a partir de IA, marca ou integridade | 5.2 |
 | RL08 | Nenhum dado de produção em ambiente de desenvolvimento ou teste | 2 |
 | RL09 | Inventário de tratamento mantido e versionado em `docs/` | 3 |
+| RL10 | Aparelho só ativa com termo assinado da versão vigente; assinatura validada; hash do PDF e versão registrados; revalidação a cada versão | 7 |
 
 ---
 
@@ -251,6 +261,8 @@ Acrescentar à seção 4 do documento 03:
 - [ ] RIPD elaborado, revisado pelo encarregado e aprovado pelo responsável
 - [ ] Bases legais definidas por tratamento
 - [ ] Texto de transparência aprovado e entregue aos usuários, com registro de ciência
+- [ ] Termo de Ciência e Autorização aprovado pelo jurídico; fluxo de assinatura gov.br testado; nível de assinatura definido
+- [ ] Termo sem codinome, sem identificador de aparelho e sem detalhe técnico de defesa
 - [ ] Retenção definida para trilha, registro de visualização e logs de integridade
 - [ ] Posição do jurídico sobre expurgo × dever de guarda documentada
 - [ ] Procedimento de atendimento a direitos de titulares

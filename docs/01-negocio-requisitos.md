@@ -102,6 +102,7 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RN03 | Cada operação tem uma política de retenção definida pelo administrador na criação (ex.: 24 h, 7 dias, até o encerramento). Vencido o prazo, o conteúdo some do aparelho e do nó de IA. |
 | RN04 | Quando o administrador apaga a operação, são destruídos: chaves da operação, mensagens em cache nos aparelhos, anexos, textos de OCR, embeddings e relatórios de IA. Permanece somente o registro de auditoria de que a operação existiu e foi expurgada. |
 | RN05 | Um usuário só entra no sistema por cadastro presencial feito pelo gestor, com QR de uso único e vínculo à matrícula. |
+| RN16 | O aparelho só é ativado depois que o agente assina, via gov.br e na presença do gestor, o **Termo de Ciência e Autorização de Acesso** (docs/anexos/termo-de-ciencia-e-autorizacao.md). Cada nova versão do termo exige nova assinatura; sem ela, o acesso é suspenso. |
 | RN06 | Um usuário só entra em uma operação por convite do administrador daquela operação. |
 | RN07 | Anexos são exibidos dentro do app. Salvar fora do app exige autorização do administrador, individual por arquivo e por usuário, com validade. A cópia exportada leva marca d'água e a exportação é registrada. |
 | RN08 | O app não abre conteúdo se o aparelho estiver em estado inseguro (ver RNF-D). O evento é registrado e o administrador é avisado. |
@@ -126,6 +127,7 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RF03 | Exibição de codinome; matrícula e nome real nunca trafegam nas salas | Essencial |
 | RF04 | Verificação entre membros por código de segurança (comparação presencial ou por QR) | Importante |
 | RF05 | Revogação imediata de aparelho pelo gestor | Essencial |
+| RF06 | Termo de Ciência e Autorização assinado eletronicamente (gov.br) no cadastro; assinatura validada, versão e resumo guardados; revalidação a cada nova versão | Essencial |
 
 ### 6.2 Operações, canais e mensagens
 
@@ -265,11 +267,12 @@ flowchart LR
   end
   subgraph Operador
     C --> D[Lê o QR presencialmente]
-    D --> E[App gera chaves no hardware]
+    D --> D2[Assina o Termo de Ciência e Autorização via gov.br, na presença do gestor]
+    D2 --> E[App gera chaves no hardware]
     E --> F[App envia atestação e pedido de certificado]
   end
   subgraph Servidor
-    F --> G{Aparelho íntegro e gerenciado?}
+    F --> G{Aparelho íntegro, gerenciado e termo válido?}
     G -- Não --> H[Recusa e registra em auditoria]
     G -- Sim --> I[Emite certificado e ativa o aparelho]
   end

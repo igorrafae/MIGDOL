@@ -7,7 +7,7 @@ Cadastro, atestação, pacotes de chave MLS, membros por sala, leases, administr
 Não participa dos grupos MLS e não vê conteúdo.
 
 ## Dono dos dados
-users, devices, rooms, memberships, key_packages.
+users, devices, rooms, memberships, key_packages, terms, term_acceptances.
 
 ## Depende de (somente via api/)
 audit/api

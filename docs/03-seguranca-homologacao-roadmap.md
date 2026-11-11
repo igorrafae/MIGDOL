@@ -201,6 +201,7 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 
 - [ ] Ato interno que institui a ferramenta e define papéis
 - [ ] Norma de uso assinada por todos os usuários
+- [ ] Termo de Ciência e Autorização assinado via gov.br por todos os usuários, versão vigente, assinatura validada
 - [ ] Política de retenção padrão aprovada
 - [ ] Rito de acesso do Auditor definido
 - [ ] Parecer jurídico sobre retenção, expurgo e cadeia de custódia
@@ -343,7 +344,7 @@ Cada fase termina com algo demonstrável e com critérios de aceite verificávei
 
 | Entrega | Critério de aceite |
 |---|---|
-| Cadastro por QR, certificado, painel mínimo do gestor | Aparelho cadastrado presencialmente; revogação efetiva |
+| Cadastro por QR, certificado, painel mínimo do gestor, **Termo assinado via gov.br como condição de ativação** | Aparelho cadastrado presencialmente; aparelho sem termo válido não ativa; nova versão do termo suspende o acesso até assinar; revogação efetiva |
 | Gateway, entrega, diretório, fila com prazo | C01, C02, C04 aprovados |
 | Criar operação, convidar, remover | D01, D03 aprovados |
 | Tela de conversa, canais, confirmações | Operador novo envia mensagem sem instrução |

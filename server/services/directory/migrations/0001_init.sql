@@ -35,3 +35,19 @@ CREATE TABLE key_packages (
     package    bytea NOT NULL,
     claimed_at timestamptz
 );
+CREATE TABLE terms (
+    version      text PRIMARY KEY,
+    text_sha256  bytea NOT NULL,
+    published_at timestamptz NOT NULL,
+    retired_at   timestamptz
+);
+CREATE TABLE term_acceptances (
+    user_id       uuid NOT NULL REFERENCES users,
+    version       text NOT NULL REFERENCES terms,
+    signed_sha256 bytea NOT NULL,
+    signer_level  text NOT NULL,            -- avançada | qualificada
+    signed_at     timestamptz NOT NULL,
+    validated_at  timestamptz NOT NULL,
+    PRIMARY KEY (user_id, version)
+);
+-- devices.status: pending_term | active | suspended | revoked

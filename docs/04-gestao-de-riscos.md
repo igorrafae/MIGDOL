@@ -114,6 +114,9 @@ O registro vive em `docs/riscos/registro.md` (ou ferramenta da instituição) e 
 | R42 | Uso desviado da análise de IA (investigar pessoas ou assuntos fora da finalidade) | Baixo | Alto | Pedido assinado e registrado com finalidade; Auditor revê pedidos; relatório com marca d'água | Médio |
 | R43 | Relógio do servidor ou da rede adulterado (afeta lease, validade e ordens de expurgo) | Baixo | Alto | Fonte de tempo interna redundante; tolerância configurada; contador de sequência nas ordens (não depende só de hora) | Baixo |
 | R44 | Vazamento por captura de cópia do material em trânsito entre sistemas oficiais (exportação autorizada) | Médio | Alto | Marca d'água; autorização individual; auditoria; canal oficial de entrega | Médio |
+| R57 | Conta gov.br de agente tomada por terceiro, que assina o termo em nome dele | Baixo | Alto | Assinatura na presença do gestor, com documento conferido; nível mínimo de conta definido; ativação exige também aparelho íntegro | Baixo |
+| R58 | Termo ou fluxo de assinatura revela vínculo agente ↔ sistema, ou detalhes das defesas | Médio | Alto | Termo sem codinome, sem identificador de aparelho e sem detalhe técnico; PDF em guarda segura do gestor; nada operacional enviado ao gov.br | Médio |
+| R59 | Indisponibilidade do gov.br impede cadastro ou renovação de termo | Médio | Médio | Janela de contingência com assinatura alternativa aprovada pelo jurídico; versão do termo muda raramente; prazo de carência na renovação | Baixo |
 
 Todos os riscos com residual **Médio** ou **Alto** exigem aceite conforme a seção 3.2. O **R37** hoje fica em **Alto** e precisa de decisão do comitê: o projeto não tem como eliminá-lo, só reduzir o alcance e aumentar a chance de atribuição.
 
