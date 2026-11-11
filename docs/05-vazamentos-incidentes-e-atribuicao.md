@@ -120,7 +120,9 @@ Regras:
 - A norma de uso e o termo assinado devem **prever expressamente** a coleta de alertas, marcas e registros usados, para que o uso não seja tratado como prova obtida por meio ilícito.
 - Toda prova que sair do sistema leva **cadeia de custódia** (hash, quem acessou, quando). Regras do Código de Processo Penal sobre cadeia de custódia: **conferir**.
 - Sobre acesso a dados de aparelho nas mãos de um investigado: observar o Tema 977 do STF (consentimento expresso ou ordem judicial).
-- Resumo e fontes: docs/anexos/validacao-juridica-preliminar.md.
+- **Prints não são prova.** A Sexta Turma do STJ já reafirmou a invalidade de prova baseada em prints (adulteráveis, sem cadeia de custódia). O material de atribuição sai do sistema como **pacote de evidência assinado** (RF67), nunca como captura de tela.
+- A cadeia de custódia ausente não gera nulidade automática (a defesa deve demonstrar adulteração), mas o procedimento deve existir de qualquer forma.
+- Resumo e fontes: docs/anexos/validacao-juridica-preliminar.md (seções 2.7 e 3.7).
 
 ### 3.7 Limites da atribuição
 
@@ -193,7 +195,7 @@ Para cada um: **0–1 h** contenção, **1–24 h** apuração, **depois** corre
 | # | Cenário | 0–1 h | 1–24 h | Depois |
 |---|---|---|---|---|
 | P1 | **Material vazado** (foto, texto) | Preservar com hash; abrir SEV1; restringir quem pode ver as salas envolvidas se houver suspeita de continuidade | Análise de marca (3.5); reduzir suspeitos; avaliar expurgo ou renovação de chaves das salas | Relatório com grau de confiança; corregedoria; ajustar compartimentação |
-| P2 | **Aparelho perdido, roubado ou apreendido** | Revogar certificado; suspender aparelho; avaliar expurgo remoto do perfil de trabalho; avisar administradores das operações dele | Remover o aparelho dos grupos (novas chaves de época); verificar se houve acesso após o evento | Substituir aparelho; registrar; avaliar coação |
+| P2 | **Aparelho perdido, roubado ou apreendido** | Revogar certificado; suspender aparelho; avaliar expurgo remoto do perfil de trabalho **(se a apreensão foi por autoridade, não destruir: só suspender e revogar até decisão do jurídico, D-R14)**; avisar administradores das operações dele | Remover o aparelho dos grupos (novas chaves de época); verificar se houve acesso após o evento | Substituir aparelho; registrar; avaliar coação |
 | P3 | **Chave de administrador comprometida** | Revogar a chave; bloquear ordens com ela; avisar membros | Reemitir chave; revisar ordens e autorizações assinadas desde o possível comprometimento | Revisão do procedimento de guarda |
 | P4 | **Servidor de mensagens comprometido** | Isolar; preservar imagens; **não** apagar logs; avisar comitê | Avaliar metadados expostos; verificar se clientes rejeitaram tentativas (assinaturas); reconstruir a partir de imagem confiável | Rotacionar credenciais e certificados; relatório; ajustar controles |
 | P5 | **Nó de IA comprometido** | Desconectar da rede; reiniciar após preservar; remover o nó das salas | Listar salas afetadas (conteúdo em claro possivelmente exposto); decidir expurgo; renovar chaves | Reconstrução; revisão de isolamento |
@@ -202,6 +204,7 @@ Para cada um: **0–1 h** contenção, **1–24 h** apuração, **depois** corre
 | P8 | **Vulnerabilidade crítica em dependência** | Avaliar exploração; mitigar (desativar recurso, regra de rede) | Corrigir e distribuir release de emergência | Atualizar SBOM e registro de riscos |
 | P9 | **Insider de infraestrutura** | Suspender acessos; preservar sessões gravadas | Revisar o que foi acessado; envolver corregedoria | Revisão de separação de funções |
 | P10 | **Expurgo ou convite indevido** | Contenção conforme o caso; se expurgo, não há reversão: registrar | Comunicar impactados; reconstruir a operação se necessário | Reforçar confirmações e treinamento |
+| P11 | **Ordem judicial ou requisição externa** (MP, polícia, juiz) | Encaminhar ao responsável institucional e ao jurídico; **ninguém da operação responde diretamente**; preservar o que existe | Responder só com o que o sistema possui (cifrado, metadados e registros de auditoria, conforme doc 02 seção 6.4); documentar que o conteúdo é inacessível por desenho | Avaliar ordem de preservação (RF58) e ajustar o rito |
 
 ### 5.5 Comunicação
 - **Interna:** quem precisa saber, no nível necessário. Não anunciar detalhes que ajudem o atacante.

@@ -182,6 +182,8 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RF56 | Quebra de pseudonimato (codinome → pessoa) somente por dupla assinatura (Auditor + Gestor), com registro (doc 05 seção 3.4) | Essencial |
 | RF57 | Alertas de segurança sem conteúdo para monitoramento (doc 05 seção 4) | Essencial |
 | RF58 | Ordem de preservação que suspende o expurgo de uma operação, se o jurídico decidir que é necessária (doc 06 seção 8.3) | A decidir |
+| RF67 | Pacote de evidência assinado para qualquer material que sair do sistema (hash, assinatura, cadeia de custódia); print não é meio de prova | Proposto |
+| RF68 | Rito de requisição externa (doc 06 seção 6.3) e requisito de que não existe vínculo de segundo cliente nem espelhamento oficial | Proposto |
 
 ---
 

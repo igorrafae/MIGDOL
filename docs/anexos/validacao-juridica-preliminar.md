@@ -63,6 +63,17 @@ Convergem: [Lefosse](https://lefosse.com/noticias/alerta/client-alert-anpd-aprov
 
 ---
 
+### 2.7 Ferramentas de comunicação: criptografia, interceptação e prova (STJ, STF, MP)
+
+Fontes secundárias (notícias e comentários); **conferir os acórdãos**. Não encontrei posição institucional do MP sobre criptografia nem decisões de 2025–2026.
+
+- **Criptografia e multa:** a Quinta Turma do STJ afastou multa contra a empresa que não conseguia interceptar conversas cifradas ponta a ponta (relator Ribeiro Dantas, em recurso do MP de Rondônia) ([Conjur](https://www.conjur.com.br/2021-jun-24/criptografia-aplicativo-mensagem-nao-permite-multa-cominatoria//?print=1), [Sedep](https://www.sedep.com.br/?p=116762)).
+- **Desvio de mensagens:** ordem para a operadora desviar mensagens de investigados para a polícia foi tratada como ilegal (Min. Laurita Vaz) ([Migalhas](https://www.migalhas.com.br/quentes/345686/stj-operadora-nao-pode-desviar-mensagens-de-investigados-para-policia)).
+- **Bloqueio de aplicativo (STF, 2022):** suspensão do Telegram por descumprimento de ordens, a pedido da Polícia Federal, revogada depois que a empresa nomeou representante no país. O plenário não decidiu se juiz pode suspender aplicativo de mensagem ([Tecnoblog](https://tecnoblog.net/noticias/bloqueio-ao-telegram-moraes-manda-suspender-app-em-todo-o-brasil/), [Migalhas](https://www.migalhas.com.br/quentes/361912/defendendo-telegram-agu-vai-ao-stf-contra-bloqueio)). O foco foi o descumprimento de ordens, não a cifragem.
+- **Celular apreendido:** ler WhatsApp em aparelho apreendido exige autorização judicial ([MobileTime](https://www.mobiletime.com.br/noticias/13/05/2016/stj-decide-que-acesso-ao-whatsapp-em-celular-apreendido-so-com-a-autorizacao-judicial/)). A Sexta Turma aceitou acesso policial antes da perícia quando não há prova de vício na autenticidade ([Migalhas](https://www.migalhas.com.br/quentes/451508/stj-acesso-de-policial-a-celular-antes-de-pericia-nao-invalida-prova)).
+- **Espelhamento via WhatsApp Web:** a Sexta Turma o considerou ilegal (2018) e reafirmou em 2021 a invalidade de prova por prints, porque mensagens podem ser enviadas e apagadas sem rastro ([OAB-RS](https://www2.oabrs.org.br/jornalDaOrdem/tribunal-reafirma-invalidade-de-prova-obtida-pelo-espelhamento-de-conversas-via-whatsapp-web/47302), [Sedep](https://www.sedep.com.br/?p=118859)). Em 2023, decisão monocrática (AREsp 2.257.960/MG) o admitiu como infiltração com controle judicial; há divergência entre as turmas ([Jus.com.br](https://jus.com.br/noticias/104950/decisao-do-stj-reconhece-legalidade-do-espelhamento-via-whatsapp-web)).
+- **Cadeia de custódia:** falha não gera nulidade automática; a defesa deve demonstrar adulteração (Sexta Turma, citada na mesma fonte da Migalhas acima).
+
 ## 3. Ajustes que a pesquisa impõe
 
 ### 3.1 Transparência pública mínima (LGPD, arts. 23 e 41)
@@ -94,6 +105,18 @@ A frase "privacidade é responsabilidade da polícia" está correta em um sentid
 
 ---
 
+### 3.7 Cruzamento com a arquitetura (ferramentas de comunicação)
+
+| Tema da jurisprudência | O que a arquitetura já faz | Lacuna ou ajuste |
+|---|---|---|
+| Ordem para entregar conteúdo ou interceptar | Servidor só tem cifrado; chaves só no core (regras 2 e 3); MLS sem custódia | Registrar que a impossibilidade é **por desenho**; criar rito e responsável institucional para requisições externas (doc 06 seção 6.3, playbook P11) |
+| Multa e bloqueio por descumprimento | Sistema interno e on-prem, sem oferta ao público | Manter representante e canal institucional; o destinatário de uma ordem é a instituição, não um provedor |
+| Espelhamento ao estilo WhatsApp Web | Sem cliente web ou aparelho companheiro; sessão única por aparelho; `FLAG_SECURE`; detecção de projeção | Declarar em requisito que **não existe vínculo de segundo cliente**; o nó de IA é membro **declarado**, nunca oculto |
+| Aparelho apreendido por autoridade | SQLCipher, chave em hardware, lease de 12 h; P2 prevê expurgo remoto | **Conflito:** expurgo remoto depois de apreensão legal pode ser lido como destruição de prova; decisão D-R14 |
+| Prints sem cadeia de custódia | Captura bloqueada; evidência sai do sistema, não de prints | Definir **pacote de evidência assinado** (hash, assinatura, cadeia) e proibir print como prova (RF67) |
+| Mensagem apagada sem rastro | Expurgo por ordem assinada, com contador e registro (P10) | O registro do expurgo permite distinguir eliminação legítima de adulteração |
+| Dados de aparelho nas mãos do investigado (Tema 977) | Termo prevê coleta; doc 05 exige contraditório | Parecer sobre quando a instituição pode abrir um aparelho do agente investigado |
+
 ## 4. O que não consegui verificar (pendente para o jurídico)
 
 1. Texto oficial da Resolução CD/ANPD 15/2024 e sua aplicação às atividades do art. 4º, III.
@@ -105,6 +128,9 @@ A frase "privacidade é responsabilidade da polícia" está correta em um sentid
 7. Situação do PL 1515/2022 depois de 30/10/2025.
 8. Textos dos acórdãos citados (as fontes foram notícias e artigos).
 9. Prazos e requisitos do art. 18 da LGPD (direitos do titular).
+10. Acórdãos e status atual das decisões da seção 2.7 (turma, data, número); divergência sobre espelhamento.
+11. Posição do Ministério Público sobre criptografia em sistemas institucionais e jurisprudência de 2025–2026.
+12. Se o expurgo remoto após apreensão por autoridade configura crime (supressão ou destruição de prova) e como o rito deve ser.
 
 ---
 
@@ -117,3 +143,4 @@ Encaminhar ao jurídico, **nesta ordem de prioridade**:
 4. Rito de apuração, cadeia de custódia e valor probatório (docs 05 e 07).
 5. Câmera e local: parecer sobre proporcionalidade e sobre o ambiente privado.
 6. Normas de inteligência aplicáveis ao sistema.
+7. Requisições externas, apreensão de aparelho e expurgo remoto (seção 3.7; D-R14).

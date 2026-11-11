@@ -88,6 +88,7 @@ O registro vive em `docs/riscos/registro.md` (ou ferramenta da instituição) e 
 | **D-R3** | Variação de conteúdo por destinatário (rastreamento textual) | Ajuda a achar quem vazou texto copiado, mas altera o conteúdo entregue. Ver documento 05, seção 3.2 |
 | **D-R4** | Retenção da trilha de auditoria e dos logs de integridade | Conflito possível entre minimização (LGPD) e controle. Ver documento 06 |
 | **D-R5** | Conflito entre expurgo e dever de guarda documental | Jurídico precisa decidir o que pode ser destruído. Ver documento 06 |
+| **D-R14** | Expurgo remoto após apreensão por autoridade: o que o sistema faz (padrão proposto: suspender e revogar, sem destruir) | Jurídico e comitê; ver R63 e anexo de validação seção 3.7 |
 | **D-R6 a D-R13** | Câmera, local, coação, triagem de spyware, atestação, pós-quântico, check-in | Ver documento 07 seção 13; riscos R45–R56 no documento 07 seção 10 |
 
 ---
@@ -116,6 +117,10 @@ O registro vive em `docs/riscos/registro.md` (ou ferramenta da instituição) e 
 | R44 | Vazamento por captura de cópia do material em trânsito entre sistemas oficiais (exportação autorizada) | Médio | Alto | Marca d'água; autorização individual; auditoria; canal oficial de entrega | Médio |
 | R60 | **Expurgo configura eliminação ilícita de documento público** (Lei 8.159, arts. 9º e 25; Código Penal, art. 314) | Médio | Alto | Parecer, tabela de temporalidade aprovada ou ordem de preservação **antes** da Fase 4; exportação do que for documento oficial; registro do fundamento de cada expurgo | **Alto até o parecer**; bloqueia a Fase 4 |
 | R61 | Prova extraída do sistema anulada por falta de base normativa, ciência ou rito | Médio | Alto | Norma de uso e termo prevendo a coleta; contraditório; cadeia de custódia; indício, não prova (doc 05) | Médio |
+| R62 | **Ordem judicial ou requisição externa que o sistema não pode cumprir** (conteúdo inexistente no servidor por desenho) → multa, pedido de bloqueio, tensão institucional | Médio | Médio | Rito e responsável institucional para requisições; resposta padrão do que existe (cifrado, metadados); jurídico no circuito; playbook P11 (doc 05) | Médio |
+| R63 | **Expurgo remoto após apreensão por autoridade** lido como destruição ou supressão de prova | Baixo | Alto | Em apreensão por autoridade: suspender e revogar, sem destruir, até decisão do jurídico (D-R14); registro do evento | **Alto até D-R14** |
+| R64 | **Print ou cópia como prova de vazamento** contestada (adulterável, sem cadeia) | Alto | Médio | Pacote de evidência assinado (RF67); proibir print como prova; cadeia de custódia (doc 05) | Médio |
+| R65 | **Segundo cliente ou espelhamento** criado no futuro (web, desktop, aparelho companheiro) reabre a controvérsia jurídica e o vetor de ataque | Baixo | Alto | Requisito de que não existe vínculo de segundo cliente; mudança exige ADR e novo parecer | Baixo |
 | R57 | Conta gov.br de agente tomada por terceiro, que assina o termo em nome dele | Baixo | Alto | Assinatura na presença do gestor, com documento conferido; nível mínimo de conta definido; ativação exige também aparelho íntegro | Baixo |
 | R58 | Termo ou fluxo de assinatura revela vínculo agente ↔ sistema, ou detalhes das defesas | Médio | Alto | Termo sem codinome, sem identificador de aparelho e sem detalhe técnico; PDF em guarda segura do gestor; nada operacional enviado ao gov.br | Médio |
 | R59 | Indisponibilidade do gov.br impede cadastro ou renovação de termo | Médio | Médio | Plano de contingência em três vias (gov.br, ICP-Brasil, presencial com testemunha e acesso provisório), com gatilho, limites e ratificação (doc 06 seção 7.1); versão do termo muda raramente; carência na renovação | Baixo |

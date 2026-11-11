@@ -276,6 +276,20 @@ Limite conhecido: memória de processo em Go, Python e JavaScript não pode ser 
 
 ---
 
+### 6.4 O que o sistema pode e não pode entregar a uma ordem externa
+
+| Existe e pode ser entregue por rito | Não existe (por desenho) |
+|---|---|
+| Mensagens cifradas armazenadas e anexos cifrados | Conteúdo em claro de mensagens (regra 3) |
+| Metadados que o servidor precisa para entregar (sala em forma opaca, horário, tamanho, estado dos aparelhos) conforme a seção 7.5 | Chaves privadas e de sessão (regra 2; só no core) |
+| Registros de auditoria, aceites do termo, status e revogação de aparelhos | Cliente web, segundo aparelho ou vínculo de espelhamento |
+| Registro de visualização e alertas, cifrados ao Auditor (doc 05) | Interceptação em trânsito: tudo é mTLS 1.3 com MLS por cima |
+
+Observações:
+- O nó de IA vê texto em claro na RAM como **membro declarado** da sala; é um ponto a incluir no parecer, pois uma ordem ao nó atingiria a instituição, não um terceiro.
+- Material de evidência sai como **pacote assinado** (RF67), não como captura de tela.
+- Apreensão de aparelho por autoridade: o padrão é suspender e revogar, sem expurgo remoto, até a decisão D-R14.
+
 ## 7. Backend em Go
 
 ### 7.1 Serviços

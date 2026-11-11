@@ -145,6 +145,13 @@ Os direitos ficam condicionados à legislação específica e ao sigilo da inves
 
 ---
 
+### 6.3 Requisições e ordens de autoridades externas
+
+- Toda ordem ou requisição de Ministério Público, polícia ou juízo chega **à instituição** e é tratada pelo responsável designado com o jurídico (playbook P11, doc 05). Nenhum operador ou administrador técnico responde diretamente.
+- O sistema **não possui conteúdo em claro** (regras 2 e 3). O que pode existir para entregar: mensagens cifradas, metadados do servidor e registros de auditoria (doc 02 seção 6.4). O rito deve dizer o que se entrega e registrar que o conteúdo é inacessível **por desenho**, não por recusa.
+- A jurisprudência encontrada (STJ afastou multa por impossibilidade técnica de interceptar mensagens cifradas) é favorável a essa posição, mas **precisa de confirmação** nos acórdãos e não trata de sistema institucional.
+- Conflito a decidir (D-R14): apreensão de aparelho por autoridade versus expurgo remoto.
+
 ## 7. Transparência com os usuários
 
 O texto de convite e a norma de uso devem informar, **antes do primeiro uso**:
