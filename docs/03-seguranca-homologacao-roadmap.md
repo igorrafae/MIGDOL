@@ -76,7 +76,7 @@ Probabilidade (P) e impacto (I): Baixo / Médio / Alto / Crítico. A coluna "Res
 | R25 | Indisponibilidade durante operação | Médio | Alto | Redundância do gateway; fila; plano de contingência definido pela unidade | Médio |
 | R26 | Texto vaza por teclado, área de transferência ou notificação | Médio | Alto | Teclado controlado pelo MDM; copiar/colar bloqueado; notificação sem conteúdo | Baixo |
 
-Riscos com residual **Médio** exigem aceite formal do responsável pela homologação.
+Riscos com residual **Médio** exigem aceite formal do responsável pela homologação. Os riscos R27 a R44, o processo de gestão e as regras de aceite por nível estão no documento 04. O R37 (transcrição e memorização) está hoje em **Alto** e não é eliminável.
 
 ---
 
@@ -284,6 +284,27 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 - [ ] Treinamento de gestores, administradores e operadores
 - [ ] Piloto com uma equipe, em operação simulada, antes do uso real
 
+### 4.9 Gestão de risco, incidentes e atribuição
+
+- [ ] Registro de riscos criado, com donos, prazos e aceites (doc 04)
+- [ ] Decisões D-R1 a D-R5 tomadas e registradas
+- [ ] Plano de resposta a incidentes e playbooks P1–P10 aprovados; contatos e acesso de emergência testados
+- [ ] Comandante de incidente designado, com substituto
+- [ ] Monitoramento de eventos de segurança funcionando, sem conteúdo (doc 05 seção 4)
+- [ ] Rito de quebra de pseudonimato aprovado e testado (dupla assinatura)
+- [ ] Procedimento de apuração de vazamento aprovado pela corregedoria, com graus de confiança
+- [ ] Teste cego de atribuição realizado e taxas registradas (F01–F03)
+- [ ] Exercício de mesa de incidente realizado
+- [ ] Teste de restauração do backup do backend realizado
+- [ ] Separação de funções implementada (gestor, infraestrutura, Auditor, desenvolvimento)
+- [ ] Pipeline de release com duas aprovações, SBOM e assinatura em HSM
+- [ ] Prazos de correção de vulnerabilidade definidos e aprovados
+- [ ] Revogação por desligamento testada (≤ 4 h úteis)
+
+### 4.10 LGPD
+
+Ver checklist completo no documento 06, seção 13. Todos os itens são condição para o parecer de homologação.
+
 ---
 
 ## 5. Roteiro de entrega
@@ -303,6 +324,8 @@ Cada fase termina com algo demonstrável e com critérios de aceite verificávei
 | Repositório, integração contínua, padrões de código | Build e testes automáticos de `app`, `core`, `server`, `ai-node`; `scripts/check-boundaries.sh` na integração contínua |
 | Esqueleto modular do `server/` (já criado) | Cinco módulos compilam; grafo de dependências verificado |
 | Pontos em aberto do documento 01 respondidos | Registrados |
+| Decisões D-R1 a D-R5 (documento 04) | Registradas; D-R1 medida em protótipo (bateria, estabilidade) |
+| Registro de riscos e primeira versão do RIPD | Criados; responsáveis nomeados |
 
 ### Fase 1 — Mensagens de texto ponta a ponta
 
@@ -371,6 +394,9 @@ Cada fase termina com algo demonstrável e com critérios de aceite verificávei
 | Revisão externa de criptografia | D06 |
 | Checklist da seção 4 completo | Todas as evidências anexadas |
 | Piloto com uma equipe | Operação simulada concluída; ajustes registrados |
+| Exercício de mesa de incidente e simulação de vazamento com teste cego | Relatórios anexados; taxas de atribuição registradas |
+| Teste de restauração e de revogação remota | Aprovados |
+| RIPD aprovado e parecer jurídico sobre LGPD e dever de guarda | Anexados |
 | Parecer de homologação | Emitido pela área de segurança |
 
 ### Depois da v1
@@ -394,6 +420,9 @@ Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
 - docs/01-negocio-requisitos.md
 - docs/02-arquitetura-engenharia.md
 - docs/03-seguranca-homologacao-roadmap.md
+- docs/04-gestao-de-riscos.md
+- docs/05-vazamentos-incidentes-e-atribuicao.md
+- docs/06-lgpd-e-conformidade.md
 
 ## Regras que não podem ser quebradas
 1. Nenhuma primitiva ou protocolo criptográfico é implementado à mão.
@@ -411,6 +440,10 @@ Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
 9. server/ é monólito modular: serviços só se falam por api/, sem importar internal/
    de outro serviço, sem consultar tabela alheia e sem FK entre serviços.
    Rode scripts/check-boundaries.sh antes de commitar mudanças no server/.
+10. Nenhum dado de produção em desenvolvimento ou teste. Nenhuma telemetria, serviço de
+    erro, push ou IA de terceiros. Dado pessoal de usuário só por rito documentado (docs/06).
+11. Nenhuma decisão contra pessoa é tomada automaticamente a partir de IA, marca d'água
+    ou integridade (docs/05). Mudança que altere o perfil de risco atualiza docs/04.
 
 ## Como trabalhar
 - Uma fase do roteiro por vez (docs/03, seção 5). Não adiantar fases.
@@ -428,3 +461,5 @@ Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
 2. Responder os pontos em aberto do documento 01, seção 11.
 3. Levantar aparelhos e MDM disponíveis e o hardware para o nó de IA.
 4. Iniciar a Fase 0 pelos três spikes; eles confirmam ou derrubam as escolhas de MLS, atestação e dimensionamento de GPU.
+5. Nomear responsável pela homologação, encarregado de dados e comandante de incidente.
+6. Levar ao jurídico os pontos do documento 06 seção 14 e as decisões D-R1 a D-R5 do documento 04.

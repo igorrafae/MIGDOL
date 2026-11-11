@@ -4,7 +4,7 @@
 **Versão do documento:** 0.2 — rascunho para validação
 **Público:** patrocinador do projeto, chefia da unidade de inteligência, jurídico/corregedoria, equipe de desenvolvimento
 
-> Documentos relacionados: `02-arquitetura-engenharia.md` (como construir) e `03-seguranca-homologacao-roadmap.md` (como provar que está seguro e em que ordem entregar).
+> Documentos relacionados: `02-arquitetura-engenharia.md` (como construir), `03-seguranca-homologacao-roadmap.md` (como provar que está seguro e em que ordem entregar), `04-gestao-de-riscos.md` (processo de gestão de risco), `05-vazamentos-incidentes-e-atribuicao.md` (detecção, resposta e investigação de vazamentos) e `06-lgpd-e-conformidade.md` (proteção de dados e conformidade).
 
 **Sobre o nome.** MIGDOL (hebraico: "torre") vem de Provérbios 18:10, "Torre Forte". O nome remete a firmeza e proteção, adequado a um ambiente policial e operacional.
 
@@ -110,6 +110,8 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RN11 | A trilha de auditoria registra quem, quando e o quê em nível de evento (cadastro, convite, remoção, exportação, alerta de integridade, expurgo). Nunca registra conteúdo de mensagem. |
 | RN12 | Remoção de um membro troca as chaves da sala; o removido não lê nada do que for enviado depois. |
 | RN13 | Copiar e colar texto para fora do app é bloqueado. Notificações do sistema não exibem conteúdo. |
+| RN14 | Nenhuma decisão contra pessoa é tomada automaticamente a partir de marca d'água, alerta de integridade ou IA. Vazamento é apurado por pessoas, com contraditório (doc 05). |
+| RN15 | O usuário é informado, antes do primeiro uso, de tudo que o sistema observa e de como a identidade real pode ser ligada ao codinome (doc 06 seção 7). |
 
 ---
 
@@ -174,6 +176,10 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RF52 | Painel do administrador com situação do expurgo por aparelho (confirmado / pendente / expirará por prazo) | Importante |
 | RF53 | Consulta à trilha de auditoria pelo perfil Auditor | Essencial |
 | RF54 | Expurgo com dupla custódia, configurável por operação | Desejável |
+| RF55 | Registro de visualização cifrado para o Auditor, para reduzir o conjunto de suspeitos em vazamentos (decisão pendente; doc 05 seção 3.3) | Importante |
+| RF56 | Quebra de pseudonimato (codinome → pessoa) somente por dupla assinatura (Auditor + Gestor), com registro (doc 05 seção 3.4) | Essencial |
+| RF57 | Alertas de segurança sem conteúdo para monitoramento (doc 05 seção 4) | Essencial |
+| RF58 | Ordem de preservação que suspende o expurgo de uma operação, se o jurídico decidir que é necessária (doc 06 seção 8.3) | A decidir |
 
 ---
 
@@ -419,3 +425,6 @@ Este item precisa de validação do jurídico da instituição; o texto abaixo �
 5. Quem exerce o papel de Auditor e com que rito acessa a trilha.
 6. Volume esperado: usuários, operações simultâneas, fotos por dia.
 7. Necessidade de operação em área sem cobertura (modo offline e seus limites).
+8. Como entregar o aviso de nova mensagem sem serviço de terceiro (decisão D-R1, doc 04).
+9. Rito de quebra de pseudonimato e variação de conteúdo por destinatário (D-R2 e D-R3, docs 04 e 05).
+10. Enquadramento LGPD, base legal, retenção da trilha e compatibilidade do expurgo com dever de guarda (D-R4 e D-R5, doc 06).

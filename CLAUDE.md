@@ -4,6 +4,9 @@
 - docs/01-negocio-requisitos.md
 - docs/02-arquitetura-engenharia.md
 - docs/03-seguranca-homologacao-roadmap.md
+- docs/04-gestao-de-riscos.md
+- docs/05-vazamentos-incidentes-e-atribuicao.md
+- docs/06-lgpd-e-conformidade.md
 
 Cada componente (app/, core/, server/, ai-node/, admin-panel/, deploy/, tests/) tem um CLAUDE.md local com fronteiras e fase. Leia o do componente antes de mexer nele.
 
@@ -23,6 +26,10 @@ Cada componente (app/, core/, server/, ai-node/, admin-panel/, deploy/, tests/) 
 9. server/ é monólito modular: serviços só se falam por api/, sem importar internal/
    de outro serviço, sem consultar tabela alheia e sem FK entre serviços.
    Rode scripts/check-boundaries.sh antes de commitar mudanças no server/.
+10. Nenhum dado de produção em desenvolvimento ou teste. Nenhuma telemetria, serviço de
+    erro, push ou IA de terceiros. Dado pessoal de usuário só por rito documentado (docs/06).
+11. Nenhuma decisão contra pessoa é tomada automaticamente a partir de IA, marca d'água
+    ou integridade (docs/05). Mudança que altere o perfil de risco atualiza docs/04.
 
 ## Como trabalhar
 - Uma fase do roteiro por vez (docs/03, seção 5). Não adiantar fases.
