@@ -4,7 +4,7 @@
 **Versão do documento:** 0.2 — rascunho para validação
 **Público:** patrocinador do projeto, chefia da unidade de inteligência, jurídico/corregedoria, equipe de desenvolvimento
 
-> Documentos relacionados: `02-arquitetura-engenharia.md` (como construir), `03-seguranca-homologacao-roadmap.md` (como provar que está seguro e em que ordem entregar), `04-gestao-de-riscos.md` (processo de gestão de risco), `05-vazamentos-incidentes-e-atribuicao.md` (detecção, resposta e investigação de vazamentos) `06-lgpd-e-conformidade.md` (proteção de dados e conformidade) e `07-resistencia-a-clonagem-e-endurecimento-avancado.md` (clonagem, aparelho e local autorizados, câmera, coação).
+> Documentos relacionados: `02-arquitetura-engenharia.md` (como construir), `03-seguranca-homologacao-roadmap.md` (como provar que está seguro e em que ordem entregar), `04-gestao-de-riscos.md` (processo de gestão de risco), `05-vazamentos-incidentes-e-atribuicao.md` (detecção, resposta e investigação de vazamentos) `06-lgpd-e-conformidade.md` (proteção de dados e conformidade) e `07-resistencia-a-clonagem-e-endurecimento-avancado.md` (clonagem, aparelho e local autorizados, câmera, coação) e `anexos/validacao-juridica-preliminar.md` (verificação de lei e jurisprudência, não substitui parecer).
 
 **Sobre o nome.** MIGDOL (hebraico: "torre") vem de Provérbios 18:10, "Torre Forte". O nome remete a firmeza e proteção, adequado a um ambiente policial e operacional.
 
@@ -127,7 +127,7 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RF03 | Exibição de codinome; matrícula e nome real nunca trafegam nas salas | Essencial |
 | RF04 | Verificação entre membros por código de segurança (comparação presencial ou por QR) | Importante |
 | RF05 | Revogação imediata de aparelho pelo gestor | Essencial |
-| RF06 | Termo de Ciência e Autorização assinado eletronicamente (gov.br) no cadastro; assinatura validada, versão e resumo guardados; revalidação a cada nova versão | Essencial |
+| RF06 | Termo de Ciência e Autorização assinado eletronicamente (gov.br) no cadastro; assinatura validada, versão e resumo guardados; revalidação a cada nova versão. Contingência em três vias, com acesso provisório limitado e ratificação (doc 06 seção 7.1) | Essencial |
 
 ### 6.2 Operações, canais e mensagens
 

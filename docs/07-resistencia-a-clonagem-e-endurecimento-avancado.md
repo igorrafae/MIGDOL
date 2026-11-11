@@ -172,6 +172,7 @@ Todas as ações são **ocultar e registrar**. Nenhuma acusa nem pune sozinha (R
   - consulta somente pelo rito do documento 05 seção 3.4, com registro.
 - A decisão de adotar vale como decisão **da instituição**; o jurídico ainda confere a base legal e o texto de ciência (doc 06 seção 7), porque isso protege a validade da prova.
 - O indicador de câmera do sistema acende; o usuário **sabe** que a câmera está ativa (RN15).
+- **Cuidados vindos da verificação jurídica** (docs/anexos/validacao-juridica-preliminar.md seção 3.5): a câmera só funciona com conteúdo sensível na tela; a imagem de evidência é **recortada** à região relevante e de baixa resolução; nada é capturado fora de alerta; sala sensível não deve ser lida em ambiente privado (perfil de local); a câmera não é usada em tela de configuração, chamada ou fora do app. Não encontrei decisão sobre câmera de aparelho funcional: **parecer do jurídico** antes da Fase 2.
 - O indicador de câmera do sistema acende; o usuário **sabe** que a câmera está ativa (transparência, RN15).
 - **Fora da tela de conteúdo, a câmera não é usada.**
 - Custo: bateria e aquecimento. Medir na Fase 2 (taxa de quadros baixa, ex.: 1–2 por segundo, e modelo leve).
@@ -182,7 +183,7 @@ A instituição pode decidir adotá-lo. Cuidados que **não são de privacidade*
 - **Modelo facial é alvo de falsificação** (foto, vídeo, máscara). Exige detecção de vivacidade e testes.
 - **O gabarito facial é dado de altíssimo valor** para o adversário. Se adotado: gabarito **só no aparelho**, cifrado em hardware, nunca no servidor.
 - **A biometria do sistema** (digital ou rosto de classe forte) já autentica o dono do aparelho com mais maturidade; o reconhecimento próprio só se justifica para **verificar continuamente** quem está lendo.
-Recomendação mantida: v1 sem reconhecimento próprio; decidir na Fase 2 com os números de A38–A42.
+Recomendação mantida: v1 sem reconhecimento próprio; decidir na Fase 2 com os números de A38–A42. A ANPD abriu tomada de subsídios sobre biometria em 2025 e pretende concluir regras em 2026; acompanhar antes de decidir.
 
 ### 6.5 Honestidade sobre eficácia
 - A detecção de câmera apontada **reduz** o vazamento por foto, mas não o elimina: um atacante informado fotografa de ângulo cego, usa câmera oculta, ou cobre e descobre que o app oculta o conteúdo e tenta outro modo.

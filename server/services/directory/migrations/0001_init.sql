@@ -45,7 +45,11 @@ CREATE TABLE term_acceptances (
     user_id       uuid NOT NULL REFERENCES users,
     version       text NOT NULL REFERENCES terms,
     signed_sha256 bytea NOT NULL,
-    signer_level  text NOT NULL,            -- avançada | qualificada
+    signer_level  text NOT NULL,            -- avançada | qualificada | presencial
+    method        text NOT NULL,            -- govbr | icp | presencial
+    witness_id    uuid,
+    provisional_until timestamptz,          -- via presencial; expira no servidor
+    ratified_at   timestamptz,
     signed_at     timestamptz NOT NULL,
     validated_at  timestamptz NOT NULL,
     PRIMARY KEY (user_id, version)

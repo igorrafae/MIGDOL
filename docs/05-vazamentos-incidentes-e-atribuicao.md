@@ -113,6 +113,15 @@ Regras:
 - Grau **Alto** é **indício forte**, ainda sujeito ao contraditório. Aparelho emprestado, esquecido, usado sob coação ou fotografado por terceiro são hipóteses que a apuração precisa afastar.
 - O relatório declara taxas de erro conhecidas (resultados de F01–F03) e as limitações do método.
 
+### 3.6a Base normativa e validade da prova
+
+- Vazamento por servidor pode configurar **violação de sigilo funcional** (Código Penal, art. 325, verificado), inclusive acesso indevido a sistemas (§ 1º) e, havendo dano, pena maior (§ 2º). O relatório de atribuição serve de indício para esse procedimento, não de condenação.
+- Em procedimento disciplinar, a prova precisa respeitar **contraditório e ampla defesa**; a jurisprudência do STJ admite prova emprestada com autorização e contraditório (Súmula 591, a conferir) e há decisões que anulam penalidade baseada em prova ilícita.
+- A norma de uso e o termo assinado devem **prever expressamente** a coleta de alertas, marcas e registros usados, para que o uso não seja tratado como prova obtida por meio ilícito.
+- Toda prova que sair do sistema leva **cadeia de custódia** (hash, quem acessou, quando). Regras do Código de Processo Penal sobre cadeia de custódia: **conferir**.
+- Sobre acesso a dados de aparelho nas mãos de um investigado: observar o Tema 977 do STF (consentimento expresso ou ordem judicial).
+- Resumo e fontes: docs/anexos/validacao-juridica-preliminar.md.
+
 ### 3.7 Limites da atribuição
 
 - A marca visível pode ser cortada da foto. A invisível pode ser degradada por ruído, recompressão forte ou captura em baixa resolução.

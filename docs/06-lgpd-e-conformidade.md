@@ -21,6 +21,8 @@ Os limites que **permanecem** não vêm da privacidade, e sim de quatro motivos 
 
 Onde antes o texto dizia "evitar por privacidade", leia-se agora "decidir pela instituição, com os controles acima".
 
+5. **Limites constitucionais que a instituição não renuncia.** A proteção de dados pessoais é direito fundamental (CF, art. 5º, LXXIX; STF, ADI 6387) e o STF afirmou que não há livre fluxo irrestrito de dados no Poder Público, exigindo finalidade, necessidade e proporcionalidade (ADPF 695 e ADI 6649). Portanto a premissa **não é "sem privacidade"**: é "a instituição responde, documenta e justifica cada tratamento". Verificação em docs/anexos/validacao-juridica-preliminar.md.
+
 ---
 
 ## 1. Enquadramento
@@ -41,7 +43,9 @@ Não depender da exclusão. **Aplicar a LGPD como padrão de referência para os
 - facilita o diálogo com corregedoria, controle externo e eventual regulamentação futura;
 - reduz risco se o enquadramento do grupo B for contestado.
 
-**Pontos a confirmar com o jurídico:** quais normas específicas se aplicam hoje à atividade de inteligência policial da instituição; status atual de qualquer lei de proteção de dados para segurança pública e persecução penal **[validar]**; manifestações e relatórios da ANPD aplicáveis ao tema **[validar]**.
+**Verificado em 2026-11-11** (docs/anexos/validacao-juridica-preliminar.md): não há lei específica em vigor; o PL 1515/2022 segue em tramitação na Câmara. A ANPD sustenta que os princípios de proteção de dados valem mesmo nas exceções do art. 4º (fonte secundária). Normas da atividade de inteligência a conferir: Lei 9.883/1999, Decretos 3.695/2000, 8.793/2016, 10.777/2021 e 10.778/2021.
+
+**Pontos a confirmar com o jurídico:** quais dessas normas impõem exigências sobre sigilo e sistemas de informação; manifestações da ANPD aplicáveis ao tema **[validar]**.
 
 ---
 
@@ -161,16 +165,47 @@ Cuidados de desenho:
 - Nenhum dado operacional vai ao gov.br: apenas o termo genérico, a matrícula e o CPF para a assinatura.
 - O texto **não detalha** métodos, limiares ou respostas de detecção; descreve categorias. Detalhe técnico ajuda o adversário.
 - A assinatura é validada pelo servidor (ou na estação do gestor) contra a cadeia de confiança aplicável, sem depender de consulta externa em tempo de uso.
-- Nível da assinatura (avançada ou qualificada) e valor jurídico: **[validar]** (Lei 14.063/2020 e norma de assinaturas eletrônicas na administração pública).
+- Nível da assinatura: a Lei 14.063/2020 (verificada) deixa o nível mínimo a **ato de cada ente**; o Decreto 10.543/2020 é **federal**. Como há informação sob sigilo, a assinatura simples não serve; usar **avançada (conta gov.br prata ou ouro) com ato interno e conferência presencial**, ou **qualificada (ICP-Brasil)**. Instituição estadual ou municipal precisa de ato próprio. Decisão do jurídico.
+
+**Transparência pública mínima (LGPD arts. 23 e 41):** o poder público deve informar as hipóteses de tratamento e divulgar o encarregado. Publicar **aviso genérico** (finalidade, categorias de dados dos usuários, retenção, encarregado e canal), sem detalhe de defesa, local ou operação; o jurídico decide o texto e eventual dispensa.
 
 Ciência do usuário **não substitui a base legal** e não deve ser tratada como consentimento livre, dada a relação funcional **[validar]**.
+
+
+### 7.1 Plano de contingência da assinatura (gov.br fora do ar) — R59
+
+**Regra geral:** o agente assina **sempre pelo gov.br**. A contingência existe só para quando o gov.br estiver indisponível ou a conta do agente não conseguir assinar, e **não** é escolha de conveniência.
+
+| Via | Quando | Como | Validade do acesso |
+|---|---|---|---|
+| **1. gov.br** (principal) | Sempre que disponível | Conta prata ou ouro; assinatura na presença do gestor; PDF validado | Definitiva (vigência do termo) |
+| **2. Assinatura qualificada ICP-Brasil** (contingência preferida) | gov.br fora do ar, ou conta do agente sem nível suficiente | Certificado do agente (token ou cartão funcional) na estação do gestor; validação **sem depender do gov.br** | Definitiva, se o ato interno admitir a qualificada |
+| **3. Assinatura presencial com testemunha** (último recurso) | As duas anteriores indisponíveis e necessidade operacional justificada | Termo impresso assinado à mão, com conferência de documento por **dois servidores** (gestor e testemunha), digitalizado e anexado; ata registrada | **Provisória: até 15 dias** (proposta) |
+
+**Gatilho:** o gestor declara a contingência no painel, com motivo; o evento vai à trilha de auditoria e o Auditor é avisado. Declaração automática se o teste de disponibilidade do serviço de assinatura falhar por mais de 4 horas úteis (proposta).
+
+**Limites do acesso provisório (via 3):**
+- sem papel de administrador de operação e sem acesso a salas de perfil "compartimento";
+- prazo curto, com expiração automática no servidor (`provisional_until`);
+- **ratificação**: o agente assina pelo gov.br (ou qualificada) em até 15 dias; sem ratificação, o aparelho volta a `pending_term`;
+- cada acesso provisório é listado ao Auditor mensalmente.
+
+**Renovação de nova versão do termo:** carência de 7 dias para assinar; se o gov.br estiver fora do ar nesse período, a carência é prorrogada até 7 dias após o retorno.
+
+**Condições para valer:**
+1. **Ato interno** da instituição que admita cada via e o nível (Lei 14.063/2020, art. 5º), a aprovar pelo jurídico **[validar]**; a via 3 exige análise do jurídico quanto à forma e ao arquivamento.
+2. Estação do gestor com validação offline da cadeia ICP-Brasil.
+3. Teste de cada via **antes** do piloto e semestralmente.
+4. Registro de quem declarou, quem conferiu e qual via foi usada.
+
+**O que a contingência não faz:** não relaxa a atestação do aparelho, o cadastro presencial nem a triagem de spyware. Só muda **como** a ciência é assinada.
 
 ---
 
 ## 8. Retenção, eliminação e dever de guarda
 
-### 8.1 Conflito a resolver (D-R5)
-O sistema foi desenhado para **destruir** conteúdo (expurgo criptográfico). Pode haver normas de **guarda documental e de arquivos públicos**, de **prestação de contas** e de **cadeia de custódia** que exijam preservar certas informações **[validar]**. O documento 01 já define o sistema como canal de coordenação, não repositório de prova; essa posição precisa ser **confirmada por escrito** pelo jurídico, junto com:
+### 8.1 Conflito a resolver (D-R5) — **bloqueia a Fase 4**
+O sistema foi desenhado para **destruir** conteúdo (expurgo criptográfico). **Verificado:** a Lei 8.159/1991 (arts. 7º, 9º e 25) trata como documento público o que órgãos produzem no exercício de suas funções, exige **autorização da instituição arquivística** para eliminar e prevê responsabilidade penal, civil e administrativa; o Código Penal, art. 314, pune quem inutiliza documento de que tem a guarda em razão do cargo. Antes de implementar o expurgo é preciso parecer, tabela de temporalidade aprovada ou ordem de preservação (docs/anexos/validacao-juridica-preliminar.md seção 3.3). Normas de **prestação de contas** e de **cadeia de custódia** também podem exigir preservar certas informações **[validar]**. O documento 01 já define o sistema como canal de coordenação, não repositório de prova; essa posição precisa ser **confirmada por escrito** pelo jurídico, junto com:
 - o que deve ser levado ao sistema oficial antes de expirar (via exportação autorizada);
 - quem é responsável por fazê-lo;
 - se há hipótese de **suspensão do expurgo** (guarda legal por determinação) e como ela se implementa sem quebrar a criptografia.
@@ -201,7 +236,8 @@ Os controles dos documentos 02, 03 e 04 são as medidas de segurança do art. 46
 - registro de toda consulta a dado pessoal.
 
 ### 9.2 Comunicação de incidente
-- Incidente que possa acarretar risco ou dano relevante a titulares exige avaliação para **comunicação à ANPD e aos titulares** (art. 48). Existe regulamento da ANPD sobre o tema, com prazo em dias úteis; **conferir o texto e o prazo atuais** **[validar]**.
+- Incidente que possa acarretar risco ou dano relevante a titulares exige avaliação para **comunicação à ANPD e aos titulares** (art. 48, verificado). A Resolução CD/ANPD 15/2024, segundo fontes secundárias, fixa **3 dias úteis a contar do conhecimento** de que dados pessoais foram afetados, com complementação em 20 dias úteis; há divergência entre fontes sobre o prazo ao titular. **Conferir o texto oficial e se se aplica fora do alcance da LGPD** **[validar]**.
+- Na avaliação de gravidade, o art. 48, § 3º considera se os dados foram tornados ininteligíveis a terceiros: a cifra ponta a ponta do projeto conta a favor.
 - Para o grupo B e conteúdo sob sigilo, o jurídico decide **se, como e quando** comunicar, considerando o sigilo da investigação **[validar]**.
 - O playbook de incidente (doc 05) inclui o encarregado desde a triagem e preserva a linha do tempo exigida para a comunicação.
 

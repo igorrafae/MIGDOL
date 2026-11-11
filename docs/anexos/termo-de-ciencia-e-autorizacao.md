@@ -47,4 +47,6 @@ Este documento comprova **ciência** e **autorização de acesso** e é requisit
 Vale enquanto eu tiver acesso ao sistema. Nova versão do termo exige nova assinatura, **sem a qual o acesso é suspenso**. A revogação do acesso por desligamento, transferência ou afastamento não depende da minha manifestação.
 
 ## 9. Assinatura
-Assinado eletronicamente por meio do **gov.br**, no nível exigido pela instituição `[avançada ou qualificada, conforme parecer]`, na presença do gestor responsável pelo cadastro.
+Assinado eletronicamente por meio do **gov.br**, no nível definido por **ato da instituição** `[número do ato; avançada com conta prata ou ouro, ou qualificada com certificado ICP-Brasil]` (Lei 14.063/2020, art. 5º).
+
+**Contingência.** Se o gov.br estiver indisponível, a assinatura pode ser feita por certificado ICP-Brasil ou, em último caso, por termo impresso assinado à mão na presença de dois servidores. Nesse último caso o acesso é **provisório** e perde a validade se eu não ratificar a assinatura pelo gov.br ou por certificado ICP-Brasil em até `[15]` dias., na presença do gestor responsável pelo cadastro.

@@ -202,6 +202,7 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 - [ ] Ato interno que institui a ferramenta e define papéis
 - [ ] Norma de uso assinada por todos os usuários
 - [ ] Termo de Ciência e Autorização assinado via gov.br por todos os usuários, versão vigente, assinatura validada
+- [ ] Ato interno admitindo as vias de assinatura (gov.br, ICP-Brasil, presencial) e plano de contingência testado (doc 06 seção 7.1)
 - [ ] Política de retenção padrão aprovada
 - [ ] Rito de acesso do Auditor definido
 - [ ] Parecer jurídico sobre retenção, expurgo e cadeia de custódia
