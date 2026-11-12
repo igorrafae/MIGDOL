@@ -706,6 +706,7 @@ Mantém-se do rascunho anterior: rede interna sem rota externa, raiz somente lei
 - Autoridade certificadora do projeto com chave raiz offline.
 - Backups: apenas do banco do backend (sem conteúdo) e da configuração. O banco da IA **não** entra em backup, para que o expurgo seja definitivo.
 - Monitoramento por métricas e eventos, sem conteúdo.
+- **Instância dedicada por instituição** (D-R21, doc 09): nada é compartilhado entre instituições (servidores, banco, HSM, AC, MDM, chaves). Não há multi-tenant. O fornecedor entrega binário assinado e reproduzível e não acessa a produção.
 
 ---
 
@@ -724,6 +725,8 @@ Mantém-se do rascunho anterior: rede interna sem rota externa, raiz somente lei
 | ADR-09 | Auditoria de metadados encadeada | Nenhum registro | Existe prova de que a operação existiu |
 | ADR-10 | Anexos cifrados no cliente | Cifra no servidor de objetos | Servidor não gera miniaturas |
 | ADR-12 | Custódia institucional com quórum de no mínimo 3 comandantes em HSM (docs/adr/0003, **proposta**): chave judicial em HSM offline com cartões; chave de recuperação em HSM online, aprovação remota só para revinculação | Chave do Auditor ou de um administrador sozinho; parte da chave no celular | Novo alvo (HSM + banco); HSM de recuperação online com operação única |
+| ADR-13 | Instância dedicada por instituição, na infraestrutura dela (doc 09, **proposta**) | Multi-tenant em ambiente compartilhado | Uma instalação por instituição; operação conjunta numa só instância |
+| ADR-14 | Nó tático de campo e lease de campo com teto de 72 h, sobre rádio IP (docs/adr/0004, **proposta**, Fase 8) | Lease longo sem nó; malha sem dono | Novo componente a endurecer; reconciliação de grupo |
 | ADR-11 | Monólito modular: um módulo Go por serviço, contratos em `api/`, dados e migrações próprios, sem FK entre serviços (docs/adr/0001) | Pacotes num só módulo; microsserviços desde já | Cerimônia de contratos; limpeza de expurgo explícita; separação futura sem reescrita |
 
 ---

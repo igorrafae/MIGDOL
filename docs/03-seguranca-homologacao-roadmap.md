@@ -318,6 +318,7 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 - [ ] Decisão D-R14 (expurgo remoto após apreensão por autoridade), rito de requisição externa (doc 06 seção 6.3) e pacote de evidência assinado (RF67) definidos
 - [ ] Escada de resposta do aparelho (doc 07 seção 7.1) aprovada; decisão D-R15 (arquivo custodiado por ordem judicial) tomada e, se adotada, ADR-0003 escrita
 - [ ] Grau máximo (D-R17) definido e sistema enquadrado no Decreto 7.845/2012 ou na norma do ente; algoritmo de Estado (D-R18) contratado antes de tratar informação classificada (doc 08)
+- [ ] Instância dedicada da instituição instalada pela própria equipe a partir de binário reproduzível; fornecedor sem acesso à produção (doc 09)
 
 ### 4.10 LGPD
 
@@ -417,13 +418,17 @@ Cada fase termina com algo demonstrável e com critérios de aceite verificávei
 | RIPD aprovado e parecer jurídico sobre LGPD e dever de guarda | Anexados |
 | Parecer de homologação | Emitido pela área de segurança |
 
+### Fase 8 — Operação em campo por rádio (depois da v1)
+
+Polícia e Exército (D-R22). Entregas e critérios no doc 10 seção 12; exige ADR-0004 aprovada e levantamento dos rádios (D-R25).
+
 ### Depois da v1
 
 - Cliente iOS, com limitações documentadas.
 - Autocompletar com modelo no aparelho.
 - Canais com membros distintos dentro da mesma operação.
 - Transcrição de áudio.
-- Cliente desktop em estação gerenciada.
+- Cliente desktop em estação gerenciada (exige ADR e novo parecer: hoje não existe segundo cliente, R65).
 
 ---
 
@@ -443,6 +448,8 @@ Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
 - docs/06-lgpd-e-conformidade.md
 - docs/07-resistencia-a-clonagem-e-endurecimento-avancado.md
 - docs/08-informacao-classificada-e-nivel-inteligencia.md
+- docs/09-perfil-exercito-e-modelo-de-implantacao.md
+- docs/10-operacao-em-campo-por-radio.md
 
 ## Regras que não podem ser quebradas
 1. Nenhuma primitiva ou protocolo criptográfico é implementado à mão.

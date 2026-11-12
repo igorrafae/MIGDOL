@@ -9,6 +9,8 @@
 - docs/06-lgpd-e-conformidade.md
 - docs/07-resistencia-a-clonagem-e-endurecimento-avancado.md
 - docs/08-informacao-classificada-e-nivel-inteligencia.md
+- docs/09-perfil-exercito-e-modelo-de-implantacao.md
+- docs/10-operacao-em-campo-por-radio.md
 
 Cada componente (app/, core/, server/, ai-node/, admin-panel/, deploy/, tests/) tem um CLAUDE.md local com fronteiras e fase. Leia o do componente antes de mexer nele.
 

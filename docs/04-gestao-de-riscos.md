@@ -91,6 +91,8 @@ O registro vive em `docs/riscos/registro.md` (ou ferramenta da instituição) e 
 | **D-R14** | Expurgo remoto após apreensão por autoridade: o que o sistema faz (padrão proposto: suspender e revogar, sem destruir) | Jurídico e comitê; ver R63 e anexo de validação seção 3.7 |
 | **D-R6 a D-R13** | Câmera, local, coação, triagem de spyware, atestação, pós-quântico, check-in | Ver documento 07 seção 13; riscos R45–R56, R66–R71 e R79–R83 no documento 07 seção 10 |
 | **D-R15** | **Definido: quórum de no mínimo 3 comandantes (ADR-0003, proposta); falta o jurídico.** Custódia institucional de histórico: recuperação por administrador em tela e entrega só por ordem judicial, com prazo máximo | Chefia + jurídico + segurança; doc 07 seções 7.3 e 7.4; exige ADR-0003 |
+| **D-R25 a D-R27** | Rádios e redes de campo, teto do lease de campo, cifra do rádio como segunda camada | Ver documento 10 seção 9; riscos R89–R93 no documento 10 seção 8 |
+| **D-R21 a D-R24** | Instância dedicada por instituição, operação em campo, rito militar do termo, detentores do quórum | Ver documento 09 seção 7; riscos R84–R88 no documento 09 seção 6 |
 | **D-R17 a D-R20** | Grau máximo, algoritmo de Estado, aparelho e sistema, proteção de metadados | Ver documento 08 seção 7; riscos R72–R78 no documento 08 seção 6 |
 | **D-R16** | Persistência de matrícula depois do reset e rastreio, frente à regra 10 | Segurança + chefia; doc 07 seção 7.4 |
 
