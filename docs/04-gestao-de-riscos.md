@@ -89,7 +89,9 @@ O registro vive em `docs/riscos/registro.md` (ou ferramenta da instituição) e 
 | **D-R4** | Retenção da trilha de auditoria e dos logs de integridade | Conflito possível entre minimização (LGPD) e controle. Ver documento 06 |
 | **D-R5** | Conflito entre expurgo e dever de guarda documental | Jurídico precisa decidir o que pode ser destruído. Ver documento 06 |
 | **D-R14** | Expurgo remoto após apreensão por autoridade: o que o sistema faz (padrão proposto: suspender e revogar, sem destruir) | Jurídico e comitê; ver R63 e anexo de validação seção 3.7 |
-| **D-R6 a D-R13** | Câmera, local, coação, triagem de spyware, atestação, pós-quântico, check-in | Ver documento 07 seção 13; riscos R45–R56 no documento 07 seção 10 |
+| **D-R6 a D-R13** | Câmera, local, coação, triagem de spyware, atestação, pós-quântico, check-in | Ver documento 07 seção 13; riscos R45–R56 e R66–R71 no documento 07 seção 10 |
+| **D-R15** | Custódia institucional de histórico: recuperação por administrador em tela e entrega só por ordem judicial, com prazo máximo | Chefia + jurídico + segurança; doc 07 seções 7.3 e 7.4; exige ADR-0003 |
+| **D-R16** | Persistência de matrícula depois do reset e rastreio, frente à regra 10 | Segurança + chefia; doc 07 seção 7.4 |
 
 ---
 

@@ -288,7 +288,8 @@ Limite conhecido: memória de processo em Go, Python e JavaScript não pode ser 
 Observações:
 - O nó de IA vê texto em claro na RAM como **membro declarado** da sala; é um ponto a incluir no parecer, pois uma ordem ao nó atingiria a instituição, não um terceiro.
 - Material de evidência sai como **pacote assinado** (RF67), não como captura de tela.
-- Apreensão de aparelho por autoridade: o padrão é suspender e revogar, sem expurgo remoto, até a decisão D-R14.
+- Apreensão de aparelho por autoridade: o padrão é suspender e revogar, sem expurgo remoto, até a decisão D-R14 (escada de resposta: doc 07 seção 7.1).
+- **Não existe hoje arquivo institucional nem reenvio de histórico a aparelho revinculado** (um aparelho novo em MLS não lê épocas anteriores). A proposta de arquivo custodiado, aberto só por ordem judicial, está no doc 07 seção 7.3 (D-R15) e depende de ADR-0003.
 
 ## 7. Backend em Go
 
@@ -560,7 +561,7 @@ Verificações (Kotlin), com a fonte de cada sinal:
 
 As verificações rodam na abertura, ao voltar para primeiro plano e de forma periódica enquanto há conteúdo na tela. O resultado é enviado ao servidor; decisões de bloqueio de sessão são do servidor, não só do app.
 
-O MDM complementa: impede instalação de apps fora da lista, desativa depuração, força versão mínima do sistema e permite apagar o perfil de trabalho remotamente.
+O MDM complementa: impede instalação de apps fora da lista, desativa depuração, força versão mínima do sistema e permite apagar o perfil de trabalho remotamente. Em aparelho totalmente gerenciado, o desenho prevê apagar o aparelho inteiro por ordem assinada (doc 07 seção 7.4).
 
 ### 8.3 Marca d'água
 

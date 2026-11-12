@@ -199,8 +199,8 @@ Não há como **detectar** coação por sensor com confiança. O que se faz é d
 | Recurso | Funcionamento |
 |---|---|
 | **PIN de coação** | Segundo PIN que abre uma conta **isca** (conversas e salas genéricas, sem dado real), envia alerta silencioso e marca a sessão. Nunca revela que é isca |
-| **Gesto ou botão de pânico** | Ação discreta que oculta tudo, envia alerta e, se configurado, **apaga a chave local** |
-| **Apagamento por tentativas** | Depois de N erros de desbloqueio, apaga o cache local e invalida a sessão |
+| **Gesto ou botão de pânico** | Ação discreta que oculta tudo, envia alerta e, se configurado, aciona o **nível 4** da escada de resposta (seção 7.1) |
+| **Apagamento por tentativas** | Depois de N erros de desbloqueio, aciona o **nível 4** (seção 7.1): apaga o cache e as chaves locais deste aparelho |
 | **Presença de terceiro** | Contagem de rostos como sinal auxiliar de risco; aciona oculte e alerta, não conclusões |
 | **Prazo de check-in** (opcional) | Para operações de risco: se o aparelho não renovar a presença no prazo definido, o servidor trata como possível apreensão (playbook P2) |
 
@@ -209,6 +209,85 @@ Cuidados:
 - A conta isca precisa parecer real o suficiente; não é pelo código que ela se sustenta, é pelo procedimento.
 - O alerta precisa chegar a alguém que **age**: define-se na Fase 0 quem recebe e em quanto tempo responde (doc 05 seção 9).
 - Isso **não resolve** coação física; reduz o dano e dá tempo à equipe.
+
+### 7.1 Escada de resposta do aparelho (revisão: o que apagar, quando e por quê)
+
+Princípio: **reversível antes de irreversível**. Destruição só quando há adversário ativo confirmado. Nenhum nível aplica consequência contra a **pessoa** (RN14, regra 11 do projeto): o aparelho se protege; quem decide sobre o agente é um humano.
+
+| Nível | Resposta | Gatilhos | Reversível? |
+|---|---|---|---|
+| **1. Travar** | Oculta o conteúdo, zera da memória o `segredo_servidor` (doc 02 seção 4.3) e exige nova sessão autenticada | Cabo de dados conectado com conteúdo na tela, ADB, projeção, terceiro olhando, rosto não reconhecido (se D-R8 adotada) | Sim |
+| **2. Isca e alerta silencioso** | Abre conta isca; alerta ao Auditor e à segurança; imagem de evidência cifrada ao Auditor (seção 6.3) | PIN de coação; PIN correto com rosto diferente (se D-R8 adotada); pânico sem apagamento | Sim |
+| **3. Trava criptográfica** | Servidor deixa de renovar o lease: o cache fica ilegível sem o `segredo_servidor`; aparelho suspenso e revogado. **Nada é destruído**: depois de perícia, a instituição pode reemitir o lease | Sinais de ferramenta forense via cabo; apreensão declarada pelo gestor; check-in vencido; spyware suspeito | Sim |
+| **4. Apagamento local** | Zera chaves e cache **deste aparelho**; ele sai das salas por nova época MLS; só volta por revinculação aprovada em tela (seção 7.4) | N erros de desbloqueio; instrumentação ativa confirmada (hook, root ou falha de atestação com sessão aberta); pânico com apagamento | Não, para este aparelho |
+
+**O que o nível 4 não apaga:** cópia no servidor (cifrada), cópias nos outros membros, trilha de auditoria. Só o aparelho perde o acesso. O evento é **registrado e assinado**, com motivo e sinal que o disparou, e o agente é informado na próxima autenticação legítima (RN15), não no momento do ataque.
+
+**Sobre a ideia de "apagar tudo ao detectar captura por cabo ou spyware":**
+- **Spyware ativo confirmado** (instrumentação, hook, root com sessão aberta): níveis 3 e 4 se justificam. O adversário é a ameaça e o cache já pode estar exposto.
+- **Cabo de dados:** níveis 1 e 3, **não 4**. A extração forense policial e o ataque de um adversário usam o mesmo cabo e **o aparelho não distingue um do outro**. Com o `segredo_servidor` zerado, a extração já não lê o cache. Apagar nesse caso, depois de apreensão legal, pode ser lido como destruição de prova (R63, R66; D-R14) e perde o registro institucional. Carregar em computador sem dados não deve disparar nada (política de portas, seção 9).
+- **Falso positivo apaga o agente legítimo:** por isso o nível 4 exige sinal forte ou várias tentativas, nunca um sinal isolado.
+
+### 7.2 Verificação do dono por foto (revisão)
+
+Há duas coisas diferentes:
+- **Foto do intruso em alerta:** já adotada (seção 6.3). Cifrada ao Auditor, só com alerta.
+- **Verificação facial do dono depois do PIN, com resposta automática:** é reconhecimento facial próprio (D-R8, não recomendado na v1). Se adotado: gabarito só no aparelho, vivacidade e medição de erro (A42, A51). Rosto diferente com PIN correto indica PIN roubado ou coação, e a resposta é o **nível 2 (isca e alerta silencioso)**, não apagar nem derrubar o usuário.
+- **"Dropar tudo desse usuário" em tempo real (revogar, apagar dados dele no servidor) fica fora**: seria decisão automática contra pessoa a partir de IA (regra 11, RN14), com falso positivo que pune o agente legítimo. A revogação é decisão humana do Auditor e do gestor.
+- Rosto é dado biométrico, sensível na LGPD; as regras da ANPD sobre biometria estão em elaboração. Parecer do jurídico antes de adotar.
+- "Sem falar nada" vale **para o intruso**. Para o agente legítimo, o termo de ciência deve prever o comportamento, e ele é informado depois.
+
+### 7.3 Entrega de mensagens só por ordem judicial (proposta D-R15, ADR-0003 a escrever)
+
+Proposta do usuário: a corporação, via administrador do aplicativo, entrega mensagens armazenadas por no máximo 5 anos **somente com ação judicial**.
+
+| Ponto | Avaliação |
+|---|---|
+| Ordem judicial como única porta para o conteúdo, com prazo máximo | **Direção boa**: reduz exposição, responde às requisições externas (playbook P11, R62) e ajuda no conflito do expurgo com a Lei 8.159 (R60, D-R5) |
+| Conflito com a arquitetura atual | Hoje **não existe arquivo**: o servidor não tem conteúdo em claro, não há custódia de chave e a retenção é por operação (RN03). Entregar mensagens exige **criar** um arquivo. Mudança que contraria decisão registrada exige novo ADR antes do código (regra do projeto) |
+| "Via administrador do aplicativo" | Um administrador sozinho **não pode** abrir o conteúdo: seria ponto único de falha e de abuso. Usar controle dual ou triplo, como a quebra de pseudonimato (doc 05 seção 3.4) |
+| "Máximo de 5 anos" | O número deve vir da **tabela de temporalidade** (doc 06 seção 8) e do jurídico; pode ser menor ou maior. O prazo máximo é bom para minimização |
+| "Somente com ordem judicial" | Para terceiros e para o **conteúdo**, é a posição prudente. O jurídico precisa dizer se controle interno e corregedoria da própria instituição também dependem de ordem judicial **[conferir]** |
+
+**Desenho compatível com as regras (a validar):**
+- Cada mensagem tem uma cópia **cifrada no cliente** para a **chave pública de custódia**; o servidor guarda só cifrado (regra 3). A chave privada de custódia fica em HSM, dividida entre Auditor, Gestor e Jurídico (regra 2: nunca no app).
+- Chaves por sala e por período; ao fim do prazo, **destrói-se a chave do período** (mesma mecânica do expurgo).
+- Abertura exige: ordem judicial registrada, escopo (sala e período), assinaturas múltiplas, registro cifrado ao Auditor, saída como **pacote de evidência assinado** (RF67).
+- Salas de perfil "compartimento" podem ficar **fora** do arquivo, por decisão da chefia.
+
+**Riscos novos:** o arquivo é um acervo único de alto valor (R68). Compromisso da chave de custódia expõe tudo do período. Além disso, contradiz o objetivo "sem histórico permanente" do documento 01: a instituição precisa escolher entre expurgo puro e arquivo custodiado, e a escolha pertence à chefia e ao jurídico.
+
+**Isto é segurança jurídica correta?** A direção (ordem judicial como única porta, controle múltiplo, prazo máximo, registro) **aumenta** a segurança jurídica. O apagamento silencioso e automático **em apreensão** a **diminui**. Nada disso é parecer jurídico: itens em **[conferir]** vão ao jurídico.
+
+### 7.4 Perda, roubo, apagamento remoto e revinculação
+
+Premissas confirmadas pelo responsável do produto:
+1. As mensagens locais se apagam; o dado continua **cifrado no servidor**.
+2. Só com **autorização de administrador em tela** o aparelho é revinculado e recebe de volta as suas mensagens.
+3. A administração apaga o aparelho remotamente, **sem deixar rastros no aparelho**.
+4. Aparelho perdido: apagar tudo e rastrear, mesmo que tentem redefini-lo.
+
+**Fluxo de perda ou roubo (administrador, em tela):**
+- O administrador declara o **motivo**: perdido ou roubado; suspeita de comprometimento; ou **apreendido por autoridade**. Perdido, roubado e comprometido levam ao apagamento total e ao modo rastreio. **Apreensão por autoridade** leva a suspender e revogar, sem apagar, até a decisão D-R14.
+- **Ordem de apagamento:** binária e assinada, com contador anti-replay (mesma mecânica do expurgo), aparelho-alvo, motivo e autor. Se o aparelho está offline, o servidor guarda a ordem e a entrega na próxima conexão. Apagar em lote exige duas autorizações (R71).
+- **Escopo:** aparelho totalmente gerenciado da instituição (Android Enterprise): apaga o aparelho inteiro pelo MDM, e não só o perfil de trabalho (doc 02 seção 8.2 hoje fala em perfil).
+- **"Sem rastros no aparelho"** significa apagamento criptográfico, sem log, aviso ou resíduo local. **O rastro existe no servidor**, assinado, com autor e motivo. É ele que defende a instituição de acusação de destruição de prova (R66) e cumpre a regra 13.
+- **Aparelho offline:** a ordem não executa. A proteção é a do lease de 12 h e da chave em hardware: ao vencer, o cache fica ilegível mesmo sem a ordem (doc 02 seção 4.3).
+
+**Redefinição e rastreio, com limites honestos:**
+- A política do MDM bloqueia o reset pelas Configurações. O reset pelo **modo de recuperação** e a **persistência de matrícula depois do reset** (proteção de redefinição, Zero-touch ou Knox) dependem do modelo e de recursos do fabricante ou do Google, que são serviços de terceiros (regra 10). Decisão **D-R16** e teste no spike do MDM na Fase 0.
+- Mesmo depois de reset: o aparelho não tem mais a chave de identidade (destruída), nem cache, e **não consegue se cadastrar** sem QR presencial (R21). O ladrão fica com um aparelho vazio. O que se protege é o dado, não o hardware.
+- **Rastreio por localização** só depois da declaração de perda, enquanto o app estiver presente e conectado. Posição cifrada para Auditor e gestor, prazo curto, registro, sem serviço de localização de terceiro. Fora da perda, continua valendo a seção 4.4 (sem coordenada no servidor). Base legal e proporcionalidade: jurídico (anexo seção 4, item 4).
+- Aparelho desligado, sem rede ou em bolsa de bloqueio de sinal **não recebe a ordem e não é rastreado**. Declarar isso na norma de uso.
+
+**Revinculação (reposição do aparelho):**
+- Pré-requisitos: aparelho antigo revogado; aparelho novo preparado e triado (RF59), série no inventário (RF60); cadastro **presencial** com identificação do agente; termo vigente (RN16); QR novo. O administrador aprova **em tela**, com registro cifrado ao Auditor. Sala de perfil "compartimento" exige um **segundo aprovador**.
+- O reenvio vale só dentro da **retenção** de cada operação e das salas permitidas; nada do que foi expurgado volta.
+- **Lacuna técnica a resolver:** no MLS, um aparelho novo **não lê épocas anteriores**. Para reenviar o histórico, algo precisa guardar essa capacidade. Opções:
+  - **A.** Chave de recuperação por usuário, gerada no core, guardada cifrada à custódia institucional e liberada pela aprovação do administrador. É custódia de chave, reduz o sigilo futuro e cria alvo (R68, R69).
+  - **B.** Os outros membros reenviam o recente. Manual e incompleto.
+  - **C.** Sem reenvio: o aparelho novo vê só o que vier depois (MLS puro).
+  O comportamento descrito corresponde à **opção A**, que usa o mesmo mecanismo de custódia da entrega judicial (seção 7.3). Por isso a **ADR-0003 deve tratar as duas coisas**, com níveis de autorização diferentes: aprovação do administrador em tela para recuperação do próprio agente; ordem judicial e assinaturas múltiplas para entrega externa.
 
 ---
 
@@ -261,6 +340,12 @@ Consequências: o servidor passa a **manter a lista de raízes e a política de 
 | R53 | Dado de localização de agentes exposto | Baixo | Crítico | Sem coordenadas no servidor; eventos por zona; retenção curta | Baixo |
 | R54 | MDM comprometido empurra app ou política maliciosa | Baixo | Crítico | Verificação de assinatura independente; rede administrativa separada; auditoria | Médio |
 | R55 | PIN de coação acionado por engano, ou isca percebida como falsa | Médio | Médio | Treinamento; procedimento de retorno; isca revisada | Médio |
+| R66 | Apagamento automático após cabo ou apreensão lido como destruição ou supressão de prova (ver R63) | Médio | Alto | Cabo: níveis 1 e 3, não 4; evento assinado com motivo; D-R14 | **Alto até D-R14** |
+| R67 | Verificação facial errada derruba ou pune agente legítimo | Médio | Alto | Resposta é nível 2 (isca e alerta), nunca revogação automática; revisão humana; medir erro (A51) | Médio |
+| R68 | Arquivo custodiado (D-R15) vira acervo único alvo de ataque | Baixo | Crítico | Chave de custódia em HSM com controle múltiplo; chaves por período; prazo máximo; ADR-0003 antes do código | A avaliar |
+| R69 | **Revinculação indevida**: engenharia social do administrador entrega o histórico a um aparelho de quem não deve | Médio | Crítico | Cadastro presencial, identificação do agente, série no inventário, termo vigente, segundo aprovador em compartimento, aviso ao Auditor, antigo aparelho revogado antes | Médio |
+| R70 | Rastreio de localização do agente sem base legal ou além da perda | Baixo | Alto | Só após declaração de perda; cifrado; prazo curto; registro; parecer do jurídico | Médio |
+| R71 | Ordem de apagamento usada com abuso, ou MDM comprometido apaga a frota | Baixo | Alto | Ordem assinada com contador; duas autorizações em lote; auditoria; separação de funções (R54) | Médio |
 | R56 | Exploração de parser de anexo (zero-click) | Médio | Crítico | Reencode; isolamento; fuzzing | Médio |
 
 ---
@@ -312,6 +397,15 @@ Consequências: o servidor passa a **manter a lista de raízes e a política de 
 | A48 | Imagem e PDF malformados (fuzzing) | Sem falha de memória; recusa |
 | A49 | App com assinatura trocada empurrado pelo MDM | Recusado em tempo de execução |
 | A50 | Assistente do sistema lendo a tela | Sem conteúdo |
+| A51 | Cabo de dados com conteúdo na tela; PIN correto com rosto diferente (se D-R8) | Nível 1 e 3, sem apagar; nível 2 no caso do rosto; medir erro |
+| A52 | Instrumentação ativa com sessão aberta | Nível 4; evento assinado; agente informado na próxima autenticação |
+| A53 | Depois do nível 4, o servidor e os outros membros mantêm o conteúdo | Só este aparelho perde o acesso |
+| A54 | Abertura do arquivo custodiado sem ordem registrada ou com uma só assinatura | Recusada (se D-R15 adotada) |
+| A55 | Reset de fábrica pelas Configurações e pelo modo de recuperação, em aparelho gerenciado | Primeiro bloqueado; o segundo medido por modelo; aparelho resetado não lê nada |
+| A56 | Aparelho resetado tenta se cadastrar sem QR presencial | Recusado |
+| A57 | Ordem de apagamento repetida, ou sem assinatura | Rejeitada pelo contador e pela verificação |
+| A58 | Revinculação sem aprovação em tela, ou em sala de compartimento com um só aprovador | Recusada |
+| A59 | Aparelho offline recebe ordem de apagamento | Ilegível pelo lease; apaga ao reconectar; evento registrado no servidor |
 
 Critério: A25–A37 e A43–A50 aprovados; **A38, A39 e A42 documentados como limites conhecidos**, mesmo sem correção possível.
 
@@ -329,6 +423,11 @@ Critério: A25–A37 e A43–A50 aprovados; **A38, A39 e A42 documentados como l
 | RF64 | PIN de coação, botão de pânico e apagamento por tentativas | Importante |
 | RF65 | Sessão única por aparelho e detecção de bifurcação de época | Essencial |
 | RF66 | Reatestação por sessão e periódica; atestação sem serviços de terceiros | Essencial |
+| RF69 | Escada de resposta em quatro níveis (seção 7.1); apagamento local registrado e assinado; cabo de dados não aciona o nível 4 | Importante |
+| RF70 | Arquivo institucional cifrado e custodiado, aberto só por ordem judicial com controle múltiplo e prazo máximo (seção 7.3) | Proposto; exige ADR-0003 |
+| RF71 | Declaração de perda com motivo; apagamento total do aparelho por ordem assinada e registrada no servidor, sem resíduo no aparelho | Importante |
+| RF72 | Revinculação do aparelho aprovada por administrador em tela, com reenvio das mensagens dentro da retenção (depende da ADR-0003) | Proposto |
+| RF73 | Modo rastreio por localização depois da declaração de perda, cifrado e com prazo | Proposto; depende do jurídico |
 | RNF-G1 | Sem alerta, quadros da câmera não são gravados nem enviados. Com alerta, somente as imagens de evidência, cifradas para o Auditor, com retenção definida | Essencial |
 | RNF-G2 | Câmera usada apenas com conteúdo na tela e app em primeiro plano | Essencial |
 
@@ -346,6 +445,9 @@ Critério: A25–A37 e A43–A50 aprovados; **A38, A39 e A42 documentados como l
 | D-R11 | Atestação sem Play Integrity (ADR-0002) | Segurança + desenvolvimento |
 | D-R12 | Criptografia pós-quântica híbrida | Segurança + desenvolvimento |
 | D-R13 | Check-in periódico em operações de risco | Chefia |
+| D-R14 | Expurgo ou apagamento após apreensão por autoridade (ver doc 04) | Jurídico + comitê |
+| D-R15 | Custódia institucional de histórico: recuperação por administrador em tela (revinculação) e entrega só por ordem judicial; prazo máximo (proposta de 5 anos, a validar) | Chefia + jurídico + segurança |
+| D-R16 | Persistência de matrícula depois do reset e rastreio (proteção de redefinição, Zero-touch, Knox) frente à regra 10 | Segurança + chefia |
 
 ---
 

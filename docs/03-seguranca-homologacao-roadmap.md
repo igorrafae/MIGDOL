@@ -315,6 +315,7 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 - [ ] Modo de coação aprovado, treinado e com destinatário do alerta definido
 - [ ] Decisões D-R6 a D-R13 do documento 07 tomadas
 - [ ] Decisão D-R14 (expurgo remoto após apreensão por autoridade), rito de requisição externa (doc 06 seção 6.3) e pacote de evidência assinado (RF67) definidos
+- [ ] Escada de resposta do aparelho (doc 07 seção 7.1) aprovada; decisão D-R15 (arquivo custodiado por ordem judicial) tomada e, se adotada, ADR-0003 escrita
 
 ### 4.10 LGPD
 
