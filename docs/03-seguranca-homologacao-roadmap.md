@@ -485,6 +485,31 @@ Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
 - Em dúvida sobre segurança, escolher a opção mais restritiva e registrar a dúvida.
 ```
 
+### 6.1 Uso de modelos de IA no desenvolvimento
+
+Vale só para **escrever e revisar o código** do MIGDOL. No produto, a regra 10 continua: nenhuma IA de terceiros em execução.
+
+**Pré-condições (antes do primeiro uso):**
+- **Autorização formal da instituição** para enviar código e desenho do sistema a um serviço externo de IA (doc 08: credenciamento e cadeia de suprimentos). Sem ela, não se usa.
+- **Nunca** enviar dado de produção, nome real, matrícula, dado de operação, chave, certificado, segredo, nem texto classificado. Exemplos e testes usam dados sintéticos (regra 10).
+- Toda saída de IA é **proposta**: revisão humana em todo PR; nos PRs de segurança, revisão por pessoa da área de segurança.
+
+**Qual modelo em cada trabalho:**
+
+| Modelo | Esforço | Onde usar |
+|---|---|---|
+| **Claude Fable 5.2** (`claude-fable-5-2`) | `high` | **Revisão de desenho**, não volume: ADRs de criptografia e protocolo (0003 custódia e quórum, 0004 campo, ADR-0002 atestação, algoritmo de Estado como segunda camada); modelagem de ameaças por fase; revisão de segurança final antes da homologação de cada fase; análise de invariantes difíceis (épocas MLS, reconciliação campo–central, expurgo, escada de resposta) |
+| **Claude Opus 5.5** (`claude-opus-5-5`) | `high` ou `xhigh` | **Implementação crítica** e revisão de todo PR de segurança: `core/` em Rust (MLS, HPKE, chaves, cache, lease, ordens assinadas); verificação de assinatura e autorização por sala no `server/` (regras 5 e 6); diretório, custódia, auditoria encadeada; plugins de segurança e câmera; nó de campo; verificador do pacote de instalação; testes de `tests/security` |
+| **Claude Sonnet 5.5** (`claude-sonnet-5-5`) | `medium` | **Volume:** interface React (`app/src`), código de apoio em Kotlin e Go sem decisão de segurança, painel administrativo (telas), testes de unidade e de integração comuns, documentação, scripts, manifestos YAML e runbooks |
+
+**Regras de escalonamento:**
+- Na dúvida se o trabalho é de segurança, usar **Opus** (regra: opção mais restritiva).
+- PR feito com Sonnet que toque `core/`, criptografia, autorização, assinatura, chaves, custódia, expurgo ou atestação **é revisado por Opus** antes da revisão humana.
+- Mudança de ADR ou de desenho criptográfico passa por **Fable** antes de ser aceita.
+- Nenhum modelo implementa primitiva criptográfica à mão (regra 1); se a biblioteca não tiver, parar e perguntar.
+
+**Medição de custo:** registrar tokens e custo dos primeiros 5 PRs da Fase 0 e recalibrar a estimativa (cerca de 140–200 PRs no projeto).
+
 ---
 
 ## 7. Próximos passos imediatos

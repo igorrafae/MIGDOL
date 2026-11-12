@@ -50,6 +50,9 @@ Cada componente (app/, core/, server/, ai-node/, admin-panel/, deploy/, tests/) 
 - Cenários de docs/03 seção 3 viram testes em tests/security quando automatizáveis.
 - Mudança que contrarie um ADR de docs/02 seção 11 ou de docs/adr exige novo ADR antes do código.
 - Em dúvida sobre segurança, escolher a opção mais restritiva e registrar a dúvida.
+- Modelos (docs/03 seção 6.1): Fable 5.2 revisa desenho, ADRs e ameaças; Opus 5.5 implementa e revisa
+  o que é de segurança (core/, cripto, autorização, chaves, custódia, expurgo, atestação); Sonnet 5.5
+  faz o volume (UI, apoio, testes comuns, docs, scripts). Na dúvida, Opus. Nunca enviar dado real.
 
 ## Arquitetura do backend
 O server/ é um monólito modular: um módulo Go por serviço em server/services/, falando só por api/.
