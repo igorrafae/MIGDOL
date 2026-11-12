@@ -64,11 +64,11 @@ Recomendação para a v1: **marca visível + invisível, registro de visualizaç
 
 ### 3.3 Registro de visualização (adotado)
 
-O aparelho registra localmente que exibiu a mensagem ou anexo `X` e envia ao servidor, **cifrado para o Auditor** (não para o administrador da operação), um recibo `(id da mensagem, aparelho, hora)`. O servidor não lê o recibo. Uso restrito ao rito da seção 3.4.
+O aparelho registra localmente que exibiu a mensagem ou anexo `X` e envia ao servidor, **cifrado para a chave de quórum (ADR-0003: mínimo 3 comandantes)** (não para o administrador da operação nem para o Auditor sozinho), um recibo `(id da mensagem, aparelho, hora)`. O servidor não lê o recibo. Uso restrito ao rito da seção 3.4.
 
 Pontos de projeto:
 - Aumenta a capacidade de atribuição; é adotado pela decisão da instituição (doc 06 seção 0).
-- É um dado de alto valor para o adversário (revela quem leu o quê): fica cifrado para o Auditor e fora do alcance do administrador de infraestrutura.
+- É um dado de alto valor para o adversário (revela quem leu o quê): fica cifrado para a chave de quórum e fora do alcance do administrador de infraestrutura.
 - Consta no RIPD e na transparência aos usuários, para proteger a validade da apuração.
 - Retenção: igual à da operação mais o prazo de apuração.
 
@@ -78,7 +78,7 @@ As salas só conhecem o codinome; o diretório conhece a matrícula. Ligar um ap
 
 1. Pedido formal da corregedoria, com número de procedimento, finalidade e escopo (quais aparelhos, qual período).
 2. Autorização do responsável pela homologação.
-3. Execução com **duas pessoas distintas**: uma do papel Auditor e uma do papel Gestor. O sistema exige as duas assinaturas.
+3. Execução pelo **quórum de no mínimo 3 comandantes** (ADR-0003), conduzida pelo Auditor e com o Gestor presente. O sistema exige o quórum; nenhuma pessoa abre sozinha.
 4. O resultado vai para o procedimento, não para quem pediu a análise de IA nem para o administrador da operação.
 5. Todo o ato é registrado na trilha de auditoria, com o escopo consultado.
 

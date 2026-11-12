@@ -293,7 +293,8 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 - [ ] Plano de resposta a incidentes e playbooks P1–P10 aprovados; contatos e acesso de emergência testados
 - [ ] Comandante de incidente designado, com substituto
 - [ ] Monitoramento de eventos de segurança funcionando, sem conteúdo (doc 05 seção 4)
-- [ ] Rito de quebra de pseudonimato aprovado e testado (dupla assinatura)
+- [ ] Rito de quebra de pseudonimato aprovado e testado (quórum de 3 comandantes, ADR-0003)
+- [ ] Cerimônia do HSM de custódia realizada (M de N, M ≥ 3), cartões distribuídos e teste de abertura com escopo (ADR-0003); HSM de recuperação com operação única e aprovação remota testada (A60–A64)
 - [ ] Procedimento de apuração de vazamento aprovado pela corregedoria, com graus de confiança
 - [ ] Teste cego de atribuição realizado e taxas registradas (F01–F03)
 - [ ] Exercício de mesa de incidente realizado
@@ -310,12 +311,13 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 - [ ] Série atestada conferida com o inventário (A31–A32)
 - [ ] Atestação sem Play Integrity, com raízes de confiança mantidas internamente (ADR-0002)
 - [ ] Cenários A25–A50 aprovados; A38, A39 e A42 documentados como limites
-- [ ] Câmera: sem alerta nada é gravado ou enviado; com alerta só evidência cifrada ao Auditor (A43)
+- [ ] Câmera: sem alerta nada é gravado ou enviado; com alerta só evidência cifrada para a chave de quórum (A43)
 - [ ] Perfis de local definidos por sala e testados (A33–A37)
 - [ ] Modo de coação aprovado, treinado e com destinatário do alerta definido
 - [ ] Decisões D-R6 a D-R13 do documento 07 tomadas
 - [ ] Decisão D-R14 (expurgo remoto após apreensão por autoridade), rito de requisição externa (doc 06 seção 6.3) e pacote de evidência assinado (RF67) definidos
 - [ ] Escada de resposta do aparelho (doc 07 seção 7.1) aprovada; decisão D-R15 (arquivo custodiado por ordem judicial) tomada e, se adotada, ADR-0003 escrita
+- [ ] Grau máximo (D-R17) definido e sistema enquadrado no Decreto 7.845/2012 ou na norma do ente; algoritmo de Estado (D-R18) contratado antes de tratar informação classificada (doc 08)
 
 ### 4.10 LGPD
 
@@ -440,6 +442,7 @@ Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
 - docs/05-vazamentos-incidentes-e-atribuicao.md
 - docs/06-lgpd-e-conformidade.md
 - docs/07-resistencia-a-clonagem-e-endurecimento-avancado.md
+- docs/08-informacao-classificada-e-nivel-inteligencia.md
 
 ## Regras que não podem ser quebradas
 1. Nenhuma primitiva ou protocolo criptográfico é implementado à mão.
@@ -462,7 +465,7 @@ Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
 11. Nenhuma decisão contra pessoa é tomada automaticamente a partir de IA, marca d'água
     ou integridade (docs/05). Mudança que altere o perfil de risco atualiza docs/04.
 12. Câmera: sem alerta, nenhum quadro é gravado nem enviado; com alerta, só imagens de evidência
-    cifradas para o Auditor (docs/07). Atestação sem Play Integrity nem serviço de terceiro.
+    cifradas para a chave de quórum (docs/07). Atestação sem Play Integrity nem serviço de terceiro.
 13. A instituição assume a privacidade dos usuários (docs/06 seção 0). Todo dado coletado sobre
     agentes é cifrado, com acesso por rito e prazo, por segurança operacional.
 

@@ -283,13 +283,13 @@ Limite conhecido: memória de processo em Go, Python e JavaScript não pode ser 
 | Mensagens cifradas armazenadas e anexos cifrados | Conteúdo em claro de mensagens (regra 3) |
 | Metadados que o servidor precisa para entregar (sala em forma opaca, horário, tamanho, estado dos aparelhos) conforme a seção 7.5 | Chaves privadas e de sessão (regra 2; só no core) |
 | Registros de auditoria, aceites do termo, status e revogação de aparelhos | Cliente web, segundo aparelho ou vínculo de espelhamento |
-| Registro de visualização e alertas, cifrados ao Auditor (doc 05) | Interceptação em trânsito: tudo é mTLS 1.3 com MLS por cima |
+| Registro de visualização, alertas e cópia de custódia, cifrados para a chave de quórum (ADR-0003); só abertos por no mínimo 3 comandantes | Interceptação em trânsito: tudo é mTLS 1.3 com MLS por cima |
 
 Observações:
 - O nó de IA vê texto em claro na RAM como **membro declarado** da sala; é um ponto a incluir no parecer, pois uma ordem ao nó atingiria a instituição, não um terceiro.
 - Material de evidência sai como **pacote assinado** (RF67), não como captura de tela.
 - Apreensão de aparelho por autoridade: o padrão é suspender e revogar, sem expurgo remoto, até a decisão D-R14 (escada de resposta: doc 07 seção 7.1).
-- **Não existe hoje arquivo institucional nem reenvio de histórico a aparelho revinculado** (um aparelho novo em MLS não lê épocas anteriores). A proposta de arquivo custodiado, aberto só por ordem judicial, está no doc 07 seção 7.3 (D-R15) e depende de ADR-0003.
+- **Não existe hoje arquivo institucional nem reenvio de histórico a aparelho revinculado** (um aparelho novo em MLS não lê épocas anteriores). A ADR-0003 (proposta) cria a cópia de custódia por sala e período, aberta só por quórum de 3 comandantes. A proposta de arquivo custodiado, aberto só por ordem judicial, está no doc 07 seção 7.3 (D-R15) e depende de ADR-0003.
 
 ## 7. Backend em Go
 
@@ -723,6 +723,7 @@ Mantém-se do rascunho anterior: rede interna sem rota externa, raiz somente lei
 | ADR-08 | Ordem de expurgo em binário com contador | JSON assinado + cache de nonces | Formato próprio a documentar e testar |
 | ADR-09 | Auditoria de metadados encadeada | Nenhum registro | Existe prova de que a operação existiu |
 | ADR-10 | Anexos cifrados no cliente | Cifra no servidor de objetos | Servidor não gera miniaturas |
+| ADR-12 | Custódia institucional com quórum de no mínimo 3 comandantes em HSM (docs/adr/0003, **proposta**): chave judicial em HSM offline com cartões; chave de recuperação em HSM online, aprovação remota só para revinculação | Chave do Auditor ou de um administrador sozinho; parte da chave no celular | Novo alvo (HSM + banco); HSM de recuperação online com operação única |
 | ADR-11 | Monólito modular: um módulo Go por serviço, contratos em `api/`, dados e migrações próprios, sem FK entre serviços (docs/adr/0001) | Pacotes num só módulo; microsserviços desde já | Cerimônia de contratos; limpeza de expurgo explícita; separação futura sem reescrita |
 
 ---

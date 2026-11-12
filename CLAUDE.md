@@ -8,6 +8,7 @@
 - docs/05-vazamentos-incidentes-e-atribuicao.md
 - docs/06-lgpd-e-conformidade.md
 - docs/07-resistencia-a-clonagem-e-endurecimento-avancado.md
+- docs/08-informacao-classificada-e-nivel-inteligencia.md
 
 Cada componente (app/, core/, server/, ai-node/, admin-panel/, deploy/, tests/) tem um CLAUDE.md local com fronteiras e fase. Leia o do componente antes de mexer nele.
 
@@ -32,9 +33,14 @@ Cada componente (app/, core/, server/, ai-node/, admin-panel/, deploy/, tests/) 
 11. Nenhuma decisão contra pessoa é tomada automaticamente a partir de IA, marca d'água
     ou integridade (docs/05). Mudança que altere o perfil de risco atualiza docs/04.
 12. Câmera: sem alerta, nenhum quadro é gravado nem enviado; com alerta, só imagens de evidência
-    cifradas para o Auditor (docs/07). Atestação sem Play Integrity nem serviço de terceiro.
+    cifradas para a chave de quórum (docs/07). Atestação sem Play Integrity nem serviço de terceiro.
 13. A instituição assume a privacidade dos usuários (docs/06 seção 0). Todo dado coletado sobre
     agentes é cifrado, com acesso por rito e prazo, por segurança operacional.
+14. Membros leem as salas pelo MLS. Todo acesso institucional a dado cifrado (custódia, evidência,
+    registros, localização, pseudonimato) exige quórum de no mínimo 3 comandantes, via HSM
+    (docs/adr/0003). Nenhuma pessoa decifra sozinha. Divisão de segredo nunca é feita à mão.
+    Só a revinculação usa quórum remoto (app do comandante, biometria do sistema + PIN);
+    abrir dado para outra pessoa é sempre presencial, com cartões, em HSM offline.
 
 ## Como trabalhar
 - Uma fase do roteiro por vez (docs/03, seção 5). Não adiantar fases.

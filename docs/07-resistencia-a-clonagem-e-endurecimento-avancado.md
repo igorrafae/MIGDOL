@@ -166,7 +166,7 @@ Todas as ações são **ocultar e registrar**. Nenhuma acusa nem pune sozinha (R
 ### 6.3 Imagem, evidência e proteção do que é coletado
 - **Fluxo contínuo:** nenhum quadro é gravado. O modelo roda em memória; só o resultado (evento) sobe. Gravar vídeo contínuo geraria um acervo enorme de alto valor para o atacante e não melhora a detecção.
 - **Evidência de imagem em alerta (decisão D-R6: adotada).** No momento de um alerta de "câmera apontada" ou "terceiro olhando", o aparelho captura **uma ou poucas imagens** e as envia:
-  - cifradas **para a chave do Auditor** (nem o servidor nem o administrador da operação leem);
+  - cifradas **para a chave de quórum (ADR-0003: mínimo 3 comandantes)** (nem o servidor, nem o administrador da operação, nem o Auditor sozinho leem);
   - com hora, aparelho e resultado do detector;
   - retenção definida pela instituição (proposta: 90 dias, ou até o fim do procedimento aberto);
   - consulta somente pelo rito do documento 05 seção 3.4, com registro.
@@ -217,7 +217,7 @@ Princípio: **reversível antes de irreversível**. Destruição só quando há 
 | Nível | Resposta | Gatilhos | Reversível? |
 |---|---|---|---|
 | **1. Travar** | Oculta o conteúdo, zera da memória o `segredo_servidor` (doc 02 seção 4.3) e exige nova sessão autenticada | Cabo de dados conectado com conteúdo na tela, ADB, projeção, terceiro olhando, rosto não reconhecido (se D-R8 adotada) | Sim |
-| **2. Isca e alerta silencioso** | Abre conta isca; alerta ao Auditor e à segurança; imagem de evidência cifrada ao Auditor (seção 6.3) | PIN de coação; PIN correto com rosto diferente (se D-R8 adotada); pânico sem apagamento | Sim |
+| **2. Isca e alerta silencioso** | Abre conta isca; alerta ao Auditor e à segurança; imagem de evidência cifrada para a chave de quórum (seção 6.3) | PIN de coação; PIN correto com rosto diferente (se D-R8 adotada); pânico sem apagamento | Sim |
 | **3. Trava criptográfica** | Servidor deixa de renovar o lease: o cache fica ilegível sem o `segredo_servidor`; aparelho suspenso e revogado. **Nada é destruído**: depois de perícia, a instituição pode reemitir o lease | Sinais de ferramenta forense via cabo; apreensão declarada pelo gestor; check-in vencido; spyware suspeito | Sim |
 | **4. Apagamento local** | Zera chaves e cache **deste aparelho**; ele sai das salas por nova época MLS; só volta por revinculação aprovada em tela (seção 7.4) | N erros de desbloqueio; instrumentação ativa confirmada (hook, root ou falha de atestação com sessão aberta); pânico com apagamento | Não, para este aparelho |
 
@@ -231,7 +231,7 @@ Princípio: **reversível antes de irreversível**. Destruição só quando há 
 ### 7.2 Verificação do dono por foto (revisão)
 
 Há duas coisas diferentes:
-- **Foto do intruso em alerta:** já adotada (seção 6.3). Cifrada ao Auditor, só com alerta.
+- **Foto do intruso em alerta:** já adotada (seção 6.3). Cifrada para a chave de quórum, só com alerta.
 - **Verificação facial do dono depois do PIN, com resposta automática:** é reconhecimento facial próprio (D-R8, não recomendado na v1). Se adotado: gabarito só no aparelho, vivacidade e medição de erro (A42, A51). Rosto diferente com PIN correto indica PIN roubado ou coação, e a resposta é o **nível 2 (isca e alerta silencioso)**, não apagar nem derrubar o usuário.
 - **"Dropar tudo desse usuário" em tempo real (revogar, apagar dados dele no servidor) fica fora**: seria decisão automática contra pessoa a partir de IA (regra 11, RN14), com falso positivo que pune o agente legítimo. A revogação é decisão humana do Auditor e do gestor.
 - Rosto é dado biométrico, sensível na LGPD; as regras da ANPD sobre biometria estão em elaboração. Parecer do jurídico antes de adotar.
@@ -250,9 +250,9 @@ Proposta do usuário: a corporação, via administrador do aplicativo, entrega m
 | "Somente com ordem judicial" | Para terceiros e para o **conteúdo**, é a posição prudente. O jurídico precisa dizer se controle interno e corregedoria da própria instituição também dependem de ordem judicial **[conferir]** |
 
 **Desenho compatível com as regras (a validar):**
-- Cada mensagem tem uma cópia **cifrada no cliente** para a **chave pública de custódia**; o servidor guarda só cifrado (regra 3). A chave privada de custódia fica em HSM, dividida entre Auditor, Gestor e Jurídico (regra 2: nunca no app).
+- Cada mensagem tem uma cópia **cifrada no cliente** para a **chave pública de custódia**; o servidor guarda só cifrado (regra 3). A chave privada de custódia fica em HSM, aberta só por **quórum de no mínimo 3 comandantes** da companhia, cada um com uma parte (ADR-0003); nunca no app.
 - Chaves por sala e por período; ao fim do prazo, **destrói-se a chave do período** (mesma mecânica do expurgo).
-- Abertura exige: ordem judicial registrada, escopo (sala e período), assinaturas múltiplas, registro cifrado ao Auditor, saída como **pacote de evidência assinado** (RF67).
+- Abertura exige: ordem judicial registrada, escopo (sala e período), quórum de comandantes, registro cifrado para a chave de quórum, saída como **pacote de evidência assinado** (RF67).
 - Salas de perfil "compartimento" podem ficar **fora** do arquivo, por decisão da chefia.
 
 **Riscos novos:** o arquivo é um acervo único de alto valor (R68). Compromisso da chave de custódia expõe tudo do período. Além disso, contradiz o objetivo "sem histórico permanente" do documento 01: a instituição precisa escolher entre expurgo puro e arquivo custodiado, e a escolha pertence à chefia e ao jurídico.
@@ -281,13 +281,13 @@ Premissas confirmadas pelo responsável do produto:
 - Aparelho desligado, sem rede ou em bolsa de bloqueio de sinal **não recebe a ordem e não é rastreado**. Declarar isso na norma de uso.
 
 **Revinculação (reposição do aparelho):**
-- Pré-requisitos: aparelho antigo revogado; aparelho novo preparado e triado (RF59), série no inventário (RF60); cadastro **presencial** com identificação do agente; termo vigente (RN16); QR novo. O administrador aprova **em tela**, com registro cifrado ao Auditor. Sala de perfil "compartimento" exige um **segundo aprovador**.
+- Pré-requisitos: aparelho antigo revogado; aparelho novo preparado e triado (RF59), série no inventário (RF60); cadastro **presencial** com identificação do agente; termo vigente (RN16); QR novo. O administrador aprova **em tela** e pede o reenvio; o histórico só é liberado pelo **quórum de 3 comandantes**, que aprovam **remotamente pelo próprio app** com biometria forte do sistema e PIN (ADR-0003, "Quórum remoto"). Os comandantes não veem o conteúdo: o HSM de recuperação recifra direto para o aparelho novo. Registro e aviso ao Auditor e ao agente.
 - O reenvio vale só dentro da **retenção** de cada operação e das salas permitidas; nada do que foi expurgado volta.
 - **Lacuna técnica a resolver:** no MLS, um aparelho novo **não lê épocas anteriores**. Para reenviar o histórico, algo precisa guardar essa capacidade. Opções:
   - **A.** Chave de recuperação por usuário, gerada no core, guardada cifrada à custódia institucional e liberada pela aprovação do administrador. É custódia de chave, reduz o sigilo futuro e cria alvo (R68, R69).
   - **B.** Os outros membros reenviam o recente. Manual e incompleto.
   - **C.** Sem reenvio: o aparelho novo vê só o que vier depois (MLS puro).
-  O comportamento descrito corresponde à **opção A**, que usa o mesmo mecanismo de custódia da entrega judicial (seção 7.3). Por isso a **ADR-0003 deve tratar as duas coisas**, com níveis de autorização diferentes: aprovação do administrador em tela para recuperação do próprio agente; ordem judicial e assinaturas múltiplas para entrega externa.
+  **Adotada a opção A, na forma da ADR-0003 (proposta):** cópia de custódia por sala e período, aberta só por quórum de no mínimo 3 comandantes. Revinculação: administrador pede em tela, **3 comandantes aprovam remotamente** (biometria do sistema + PIN) e o HSM de recuperação recifra o histórico para a chave do aparelho novo. Entrega externa: ordem judicial obrigatória e o mesmo quórum.
 
 ---
 
@@ -345,6 +345,11 @@ Consequências: o servidor passa a **manter a lista de raízes e a política de 
 | R68 | Arquivo custodiado (D-R15) vira acervo único alvo de ataque | Baixo | Crítico | Chave de custódia em HSM com controle múltiplo; chaves por período; prazo máximo; ADR-0003 antes do código | A avaliar |
 | R69 | **Revinculação indevida**: engenharia social do administrador entrega o histórico a um aparelho de quem não deve | Médio | Crítico | Cadastro presencial, identificação do agente, série no inventário, termo vigente, segundo aprovador em compartimento, aviso ao Auditor, antigo aparelho revogado antes | Médio |
 | R70 | Rastreio de localização do agente sem base legal ou além da perda | Baixo | Alto | Só após declaração de perda; cifrado; prazo curto; registro; parecer do jurídico | Médio |
+| R79 | Conluio de 3 ou mais comandantes para abrir dados sem pedido legítimo | Baixo | Crítico | Pedido registrado antes do quórum; trilha imutável; aviso ao Auditor; ordem judicial para uso externo; revisão por órgão de controle | Médio |
+| R80 | Coação ou roubo de cartões de comandantes | Baixo | Crítico | M ≥ 3; cartões em locais separados com PIN; quórum só em estação isolada; reemissão ao suspeitar | Baixo |
+| R81 | HSM de recuperação online explorado | Baixo | Crítico | Operação única (recifrar para aparelho atestado do mesmo agente, membro atual, dentro da retenção); sem exportação; rede segregada; auditoria | Médio |
+| R82 | Cadastro falso de aparelho aprovado de boa-fé por três comandantes | Baixo | Alto | Pedido só nasce de cadastro presencial com atestação e série; aprovadores distintos do gestor; dados do pedido na tela; aviso ao agente pelos canais antigos | Baixo |
+| R83 | Aparelho de comandante comprometido ou coagido | Médio | Médio | Chave de aprovação no StrongBox com biometria + PIN; PIN de coação recusa e alerta; um aparelho só não basta; revogação da chave | Baixo |
 | R71 | Ordem de apagamento usada com abuso, ou MDM comprometido apaga a frota | Baixo | Alto | Ordem assinada com contador; duas autorizações em lote; auditoria; separação de funções (R54) | Médio |
 | R56 | Exploração de parser de anexo (zero-click) | Médio | Crítico | Reencode; isolamento; fuzzing | Médio |
 
@@ -381,7 +386,7 @@ Consequências: o servidor passa a **manter a lista de raízes e a política de 
 | A40 | Câmera frontal coberta | Oculta |
 | A41 | Terceiro olhando por cima do ombro | Oculta |
 | A42 | Falso positivo em uso normal por 1 hora | Medir taxa |
-| A43 | Quadro da câmera em disco, memória persistente, rede e logs, **sem alerta** | Nada gravado ou enviado. **Com alerta:** só as imagens de evidência, cifradas ao Auditor |
+| A43 | Quadro da câmera em disco, memória persistente, rede e logs, **sem alerta** | Nada gravado ou enviado. **Com alerta:** só as imagens de evidência, cifradas para a chave de quórum |
 | A44 | PIN de coação e botão de pânico | Conta isca; alerta chega; nada vaza ao observador |
 
 ### Triagem e aparelho (A45–A47)
@@ -406,6 +411,11 @@ Consequências: o servidor passa a **manter a lista de raízes e a política de 
 | A57 | Ordem de apagamento repetida, ou sem assinatura | Rejeitada pelo contador e pela verificação |
 | A58 | Revinculação sem aprovação em tela, ou em sala de compartimento com um só aprovador | Recusada |
 | A59 | Aparelho offline recebe ordem de apagamento | Ilegível pelo lease; apaga ao reconectar; evento registrado no servidor |
+| A60 | Revinculação com 2 aprovações, com aprovação do próprio agente ou do gestor que cadastrou | Recusada |
+| A61 | HSM de recuperação recebe pedido para aparelho de outro agente, sem atestação ou para sala de que ele não é membro | Recusado |
+| A62 | Aprovação com foto ou vídeo do rosto do comandante | Recusada pela biometria do sistema (medir por modelo) |
+| A63 | Aprovação com PIN de coação | Recusa silenciosa e alerta |
+| A64 | Comandante tenta ver o conteúdo durante a aprovação | Nada exibido; só metadados do pedido |
 
 Critério: A25–A37 e A43–A50 aprovados; **A38, A39 e A42 documentados como limites conhecidos**, mesmo sem correção possível.
 
@@ -428,7 +438,8 @@ Critério: A25–A37 e A43–A50 aprovados; **A38, A39 e A42 documentados como l
 | RF71 | Declaração de perda com motivo; apagamento total do aparelho por ordem assinada e registrada no servidor, sem resíduo no aparelho | Importante |
 | RF72 | Revinculação do aparelho aprovada por administrador em tela, com reenvio das mensagens dentro da retenção (depende da ADR-0003) | Proposto |
 | RF73 | Modo rastreio por localização depois da declaração de perda, cifrado e com prazo | Proposto; depende do jurídico |
-| RNF-G1 | Sem alerta, quadros da câmera não são gravados nem enviados. Com alerta, somente as imagens de evidência, cifradas para o Auditor, com retenção definida | Essencial |
+| RF77 | Aprovação remota da revinculação pelo app do comandante: assinatura do pedido com chave do StrongBox liberada por biometria forte do sistema e PIN; quórum de 3 em janela; PIN de coação | Proposto (ADR-0003) |
+| RNF-G1 | Sem alerta, quadros da câmera não são gravados nem enviados. Com alerta, somente as imagens de evidência, cifradas para a chave de quórum, com retenção definida | Essencial |
 | RNF-G2 | Câmera usada apenas com conteúdo na tela e app em primeiro plano | Essencial |
 
 ---
@@ -446,7 +457,7 @@ Critério: A25–A37 e A43–A50 aprovados; **A38, A39 e A42 documentados como l
 | D-R12 | Criptografia pós-quântica híbrida | Segurança + desenvolvimento |
 | D-R13 | Check-in periódico em operações de risco | Chefia |
 | D-R14 | Expurgo ou apagamento após apreensão por autoridade (ver doc 04) | Jurídico + comitê |
-| D-R15 | Custódia institucional de histórico: recuperação por administrador em tela (revinculação) e entrega só por ordem judicial; prazo máximo (proposta de 5 anos, a validar) | Chefia + jurídico + segurança |
+| D-R15 | **Definido pelo responsável do produto: quórum de no mínimo 3 comandantes (ADR-0003, proposta).** Falta o jurídico. Custódia institucional de histórico: recuperação por administrador em tela (revinculação) e entrega só por ordem judicial; prazo máximo (proposta de 5 anos, a validar) | Chefia + jurídico + segurança |
 | D-R16 | Persistência de matrícula depois do reset e rastreio (proteção de redefinição, Zero-touch, Knox) frente à regra 10 | Segurança + chefia |
 
 ---
@@ -473,7 +484,7 @@ Acrescentar ao inventário da seção 3:
 |---|---|---|---|
 | Imagem da câmera frontal | Usuário e terceiros no quadro | Detectar presença e câmera apontada | Fluxo contínuo processado em memória, sem gravação; imagens só em alerta |
 | Eventos de câmera (terceiro, câmera apontada, câmera coberta) | Usuário | Segurança e apuração | Trilha; retenção a definir |
-| Evidência de imagem (alerta) | Usuário e terceiros | Atribuição | **Ativa**; cifrada para o Auditor; retenção definida pela instituição; acesso pelo rito |
+| Evidência de imagem (alerta) | Usuário e terceiros | Atribuição | **Ativa**; cifrada para a chave de quórum; retenção definida pela instituição; acesso pelo rito |
 | Eventos de zona (entrada, saída, acesso negado) | Usuário | Controle de local | Sem coordenadas; retenção curta |
 | Número de série e identificadores atestados | Aparelho (vinculável ao usuário) | Controle de acesso | Diretório; acesso restrito |
 | Resultado de triagem de spyware | Aparelho e usuário | Segurança | Cadastro do aparelho; retenção definida |

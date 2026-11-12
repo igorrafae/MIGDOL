@@ -73,7 +73,7 @@ Preencher e manter atualizado. Base legal e retenção são **propostas** a vali
 | Aparelho, atestação, certificado | A | Segurança do acesso | Idem | Diretório | Vida do aparelho + prazo | Gestor; segurança |
 | Eventos de integridade | A | Detectar uso inseguro | Idem; legítimo interesse não se aplica ao poder público em regra **[validar]** | Auditoria | **A definir (D-R4)** | Segurança; Auditor |
 | Trilha de auditoria (metadados) | A | Controle institucional | Cumprimento de obrigação / controle | Auditoria | **A definir (D-R4)** | Auditor |
-| Registro de visualização | A | Apuração de vazamento | Idem | Cifrado para o Auditor | Curta; **a definir** | Auditor, sob rito do doc 05 |
+| Registro de visualização | A | Apuração de vazamento | Idem | Cifrado para a chave de quórum (ADR-0003) | Curta; **a definir** | Auditor, sob rito do doc 05 |
 | Marca d'água (identificador do aparelho) | A | Atribuição de vazamento | Idem | Em exibição; no conteúdo exportado | Enquanto o conteúdo existir | Corregedoria, sob rito |
 | Biometria de desbloqueio | A | Autenticar uso | — | **Fica no sistema do aparelho**; o app só recebe sucesso ou falha | — | Ninguém no app |
 | Metadados de mensagens (room_id aleatório, horários, volume) | A (e indiretamente B) | Entrega e operação | Execução de política pública | Backend, fila temporária | Até entrega ou 72 h | Sistema |

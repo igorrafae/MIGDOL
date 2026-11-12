@@ -4,7 +4,7 @@
 **Versão do documento:** 0.2 — rascunho para validação
 **Público:** patrocinador do projeto, chefia da unidade de inteligência, jurídico/corregedoria, equipe de desenvolvimento
 
-> Documentos relacionados: `02-arquitetura-engenharia.md` (como construir), `03-seguranca-homologacao-roadmap.md` (como provar que está seguro e em que ordem entregar), `04-gestao-de-riscos.md` (processo de gestão de risco), `05-vazamentos-incidentes-e-atribuicao.md` (detecção, resposta e investigação de vazamentos) `06-lgpd-e-conformidade.md` (proteção de dados e conformidade) e `07-resistencia-a-clonagem-e-endurecimento-avancado.md` (clonagem, aparelho e local autorizados, câmera, coação) e `anexos/validacao-juridica-preliminar.md` (verificação de lei e jurisprudência, não substitui parecer).
+> Documentos relacionados: `02-arquitetura-engenharia.md` (como construir), `03-seguranca-homologacao-roadmap.md` (como provar que está seguro e em que ordem entregar), `04-gestao-de-riscos.md` (processo de gestão de risco), `05-vazamentos-incidentes-e-atribuicao.md` (detecção, resposta e investigação de vazamentos) `06-lgpd-e-conformidade.md` (proteção de dados e conformidade) e `07-resistencia-a-clonagem-e-endurecimento-avancado.md` (clonagem, aparelho e local autorizados, câmera, coação), `08-informacao-classificada-e-nivel-inteligencia.md` (graus de sigilo, Decreto 7.845/2012, requisitos de nível de inteligência) e `anexos/validacao-juridica-preliminar.md` (verificação de lei e jurisprudência, não substitui parecer).
 
 **Sobre o nome.** MIGDOL (hebraico: "torre") vem de Provérbios 18:10, "Torre Forte". O nome remete a firmeza e proteção, adequado a um ambiente policial e operacional.
 
@@ -178,8 +178,8 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RF52 | Painel do administrador com situação do expurgo por aparelho (confirmado / pendente / expirará por prazo) | Importante |
 | RF53 | Consulta à trilha de auditoria pelo perfil Auditor | Essencial |
 | RF54 | Expurgo com dupla custódia, configurável por operação | Desejável |
-| RF55 | Registro de visualização cifrado para o Auditor, para reduzir o conjunto de suspeitos em vazamentos (adotado; doc 05 seção 3.3) | Importante |
-| RF56 | Quebra de pseudonimato (codinome → pessoa) somente por dupla assinatura (Auditor + Gestor), com registro (doc 05 seção 3.4) | Essencial |
+| RF55 | Registro de visualização cifrado para a chave de quórum (ADR-0003), para reduzir o conjunto de suspeitos em vazamentos (adotado; doc 05 seção 3.3) | Importante |
+| RF56 | Quebra de pseudonimato (codinome → pessoa) somente por quórum de no mínimo 3 comandantes (ADR-0003), com registro (doc 05 seção 3.4) | Essencial |
 | RF57 | Alertas de segurança sem conteúdo para monitoramento (doc 05 seção 4) | Essencial |
 | RF58 | Ordem de preservação que suspende o expurgo de uma operação, se o jurídico decidir que é necessária (doc 06 seção 8.3) | A decidir |
 | RF67 | Pacote de evidência assinado para qualquer material que sair do sistema (hash, assinatura, cadeia de custódia); print não é meio de prova | Proposto |
@@ -228,7 +228,7 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RNF-D5 | Em estado inseguro: conteúdo oculto, sessão encerrada, evento auditado |
 | RNF-D6 | Somente aparelho da instituição, com número de série atestado pelo hardware e presente no inventário (doc 07 seção 3) |
 | RNF-D7 | Preparação do aparelho em estação controlada, com triagem de spyware antes do cadastro (doc 07 seção 2) |
-| RNF-D8 | Detecção por câmera, no aparelho, de ausência, terceiros e câmera apontada; imagens de evidência apenas em alerta, cifradas para o Auditor (doc 07 seção 6) |
+| RNF-D8 | Detecção por câmera, no aparelho, de ausência, terceiros e câmera apontada; imagens de evidência apenas em alerta, cifradas para a chave de quórum (doc 07 seção 6) |
 | RNF-D9 | Salas com perfil de local autorizado: acesso só por rede ou proximidade autorizadas (doc 07 seção 4) |
 
 ### E. Desempenho e disponibilidade
