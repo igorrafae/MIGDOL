@@ -708,6 +708,31 @@ Mantém-se do rascunho anterior: rede interna sem rota externa, raiz somente lei
 - Monitoramento por métricas e eventos, sem conteúdo.
 - **Instância dedicada por instituição** (D-R21, doc 09): nada é compartilhado entre instituições (servidores, banco, HSM, AC, MDM, chaves). Não há multi-tenant. O fornecedor entrega binário assinado e reproduzível e não acessa a produção.
 
+### 10.1 Pacote de instalação offline (proposta, montado a partir da Fase 1)
+
+Toda instalação (central, zona de IA, nó de campo) vem de **um pacote offline e assinado**, com manifestos YAML dentro. Só YAML não basta: a instalação não tem internet e precisa levar tudo.
+
+```
+migdol-<versão>/
+  imagens/      servidor, nó de IA, PostgreSQL, armazenamento (OCI, fixadas por digest)
+  manifestos/   YAML por perfil: central, zona-ia, campo
+  config/       instituicao.exemplo.yaml (sem segredos)
+  app/          APK assinado, distribuído pelo MDM
+  sbom/         lista de componentes
+  hashes/       hashes e assinatura do pacote; atestação de build reproduzível
+  runbooks/     cerimônia da AC, do HSM e do quórum; instalação; atualização; retorno
+  verificar     confere assinatura e hashes antes de qualquer passo
+```
+
+Regras:
+- **Instala sem internet**; nada é baixado durante a instalação (regra 10, doc 09).
+- **Verificar antes de instalar:** assinatura (chave de release em HSM, duas aprovações, doc 03) e hashes. Pacote que não confere não instala.
+- **Um pacote para todas as instituições.** O que muda é o perfil e o `instituicao.yaml`: graus de sigilo, retenção, papéis, M e N do quórum, perfis de local, rito do termo, normas (RNF-T3).
+- **Nenhum segredo em YAML nem no pacote.** Chaves nascem no HSM em cerimônia; senhas internas são geradas na instalação e guardadas cifradas.
+- **Atualização** por pacote novo assinado, com migrações por serviço (ADR-0001) e caminho de retorno testado; o banco da IA continua fora de backup.
+- O fornecedor entrega o pacote; a equipe da instituição instala; o fornecedor **não acessa** a produção (RNF-T2).
+- **Orquestração (D-R28):** proposta **Docker Compose ou unidades systemd** (um binário, banco e armazenamento: superfície menor, auditoria mais simples). Kubernetes só se a instituição já o opera, com endurecimento próprio.
+
 ---
 
 ## 11. Decisões registradas (ADR resumido)
@@ -727,6 +752,7 @@ Mantém-se do rascunho anterior: rede interna sem rota externa, raiz somente lei
 | ADR-12 | Custódia institucional com quórum de no mínimo 3 comandantes em HSM (docs/adr/0003, **proposta**): chave judicial em HSM offline com cartões; chave de recuperação em HSM online, aprovação remota só para revinculação | Chave do Auditor ou de um administrador sozinho; parte da chave no celular | Novo alvo (HSM + banco); HSM de recuperação online com operação única |
 | ADR-13 | Instância dedicada por instituição, na infraestrutura dela (doc 09, **proposta**) | Multi-tenant em ambiente compartilhado | Uma instalação por instituição; operação conjunta numa só instância |
 | ADR-14 | Nó tático de campo e lease de campo com teto de 72 h, sobre rádio IP (docs/adr/0004, **proposta**, Fase 8) | Lease longo sem nó; malha sem dono | Novo componente a endurecer; reconciliação de grupo |
+| ADR-15 | Entrega por pacote offline assinado com manifestos YAML por perfil; orquestração Compose ou systemd (seção 10.1, **proposta**) | Instalação por internet; Kubernetes por padrão; segredos em YAML | Pacote grande; atualização manual por mídia controlada |
 | ADR-11 | Monólito modular: um módulo Go por serviço, contratos em `api/`, dados e migrações próprios, sem FK entre serviços (docs/adr/0001) | Pacotes num só módulo; microsserviços desde já | Cerimônia de contratos; limpeza de expurgo explícita; separação futura sem reescrita |
 
 ---

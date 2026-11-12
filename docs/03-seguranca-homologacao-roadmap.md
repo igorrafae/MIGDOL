@@ -319,6 +319,7 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 - [ ] Escada de resposta do aparelho (doc 07 seção 7.1) aprovada; decisão D-R15 (arquivo custodiado por ordem judicial) tomada e, se adotada, ADR-0003 escrita
 - [ ] Grau máximo (D-R17) definido e sistema enquadrado no Decreto 7.845/2012 ou na norma do ente; algoritmo de Estado (D-R18) contratado antes de tratar informação classificada (doc 08)
 - [ ] Instância dedicada da instituição instalada pela própria equipe a partir de binário reproduzível; fornecedor sem acesso à produção (doc 09)
+- [ ] Instalação e atualização feitas pelo pacote offline assinado (doc 02 seção 10.1): verificador recusa pacote alterado; nenhum segredo no pacote; retorno à versão anterior testado
 
 ### 4.10 LGPD
 
