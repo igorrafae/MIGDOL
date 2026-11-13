@@ -68,12 +68,12 @@ Preencher e manter atualizado. Base legal e retenção são **propostas** a vali
 
 | Dado | Titular | Finalidade | Base legal proposta | Onde fica | Retenção | Quem acessa |
 |---|---|---|---|---|---|---|
-| Matrícula, nome real | A | Vincular aparelho à pessoa para controle e responsabilização | Execução de políticas públicas / cumprimento de dever legal **[validar]** | Diretório (coluna cifrada) | Vínculo + prazo de apuração | Gestor; Auditor sob rito |
+| Matrícula, nome real | A | Vincular aparelho à pessoa para controle e responsabilização | Execução de políticas públicas / cumprimento de dever legal **[validar]** | Diretório: cifrada para a chave de quórum de pseudonimato; índice de consulta com chave fora do `server/` (D09) | Vínculo + prazo de apuração | Gestor, pelo índice, com consulta registrada; vínculo com o codinome só por quórum presencial (doc 05 seção 3.4) |
 | Codinome | A | Identificação dentro das salas, sem expor a pessoa | Idem | Diretório; mensagens cifradas | Idem | Membros da sala |
 | Aparelho, atestação, certificado | A | Segurança do acesso | Idem | Diretório | Vida do aparelho + prazo | Gestor; segurança |
 | Eventos de integridade | A | Detectar uso inseguro | Idem; legítimo interesse não se aplica ao poder público em regra **[validar]** | Auditoria | **A definir (D-R4)** | Segurança; Auditor |
 | Trilha de auditoria (metadados) | A | Controle institucional | Cumprimento de obrigação / controle | Auditoria | **A definir (D-R4)** | Auditor |
-| Registro de visualização | A | Apuração de vazamento | Idem | Cifrado para a chave de quórum (ADR-0003) | Curta; **a definir** | Auditor, sob rito do doc 05 |
+| Registro de visualização | A | Apuração de vazamento | Idem | Cifrado para a chave de quórum (ADR-0003) | Curta; **a definir** | Quórum presencial, pelo rito do doc 05, conduzido pelo Auditor |
 | Marca d'água (identificador do aparelho) | A | Atribuição de vazamento | Idem | Em exibição; no conteúdo exportado | Enquanto o conteúdo existir | Corregedoria, sob rito |
 | Biometria de desbloqueio | A | Autenticar uso | — | **Fica no sistema do aparelho**; o app só recebe sucesso ou falha | — | Ninguém no app |
 | Metadados de mensagens (room_id aleatório, horários, volume) | A (e indiretamente B) | Entrega e operação | Execução de política pública | Backend, fila temporária | Até entrega ou 72 h | Sistema |
@@ -82,6 +82,18 @@ Preencher e manter atualizado. Base legal e retenção são **propostas** a vali
 | Imagem da câmera frontal (detecção de presença e de câmera apontada) | A e terceiros no quadro | Segurança contra fotografia da tela | Processada em memória; **não persistida**; só evento (doc 07 seção 6) | Evento: **a definir** | Segurança, Auditor |
 | Eventos de local (zona) e série atestada | A | Controle de aparelho e local autorizados | Sem coordenadas; retenção curta (doc 07 seções 3 e 4) | **A definir** | Segurança, Auditor |
 | Relatórios de IA | B | Apoio à decisão | Idem | Cache do administrador | Igual à operação | Administrador |
+| Cópia de custódia (só sala sob custódia) | B (e A) | Atender ordem judicial, ou processo administrativo com validação jurídica, sempre com CI | Legislação específica; investigação militar, corregedoria ou inquérito, conforme o perfil **[validar]** | Serviço `custody`, cifrada para a chave de quórum (ADR-0003) | Até 5 anos da conclusão **[validar]** | Quórum presencial |
+| Termo de ciência e aceite da revinculação, com foto e assinatura | A | Registrar ciência e aceite da reposição do aparelho | Cumprimento de dever legal **[validar]**; foto é dado biométrico sensível (art. 11) **[validar]** | Cifrado para a chave de quórum do termo; hash na trilha; cópia exportada ao sistema corporativo, **sem a foto** até D-R30 | **A definir (D-R30)** | Quórum presencial, para responder a CI |
+| Posição em modo perda | A | Recuperar o aparelho e proteger o agente | **[validar]** | Tempo real pela sala de resposta (MLS); cópia guardada só cifrada para a chave de quórum | Prazo da perda | Membros da sala de resposta; quórum presencial |
+| Posição em missão ativa (ADR-0008, proposta; Fase 8) | A | Coordenação e segurança da equipe em campo | **[validar]** | Mensagens MLS da sala da missão; em sala sob custódia, também a cópia de custódia | Retenção da sala; cópia de custódia até 5 anos | Membros da sala (comandante); quórum presencial |
+| Segredo de lease guardado de aparelho revogado | A (indireto) | Preservar o cache para apuração (GD-13) | **[validar]** | Serviço `custody`, cifrado para a chave de quórum | Prazo da apuração (D-R35) | Quórum presencial, com o aparelho em mãos |
+| Número e hash do relatório de conclusão | — | Fundamentar a conclusão da sala (RN18) | — | Estado do grupo; hash na trilha | Vida da custódia | Membros; Auditor |
+| Indicadores do nível 2: agregados derivados e nominais (ADR-0008, proposta; depois da v1) | B (presos, investigados) e A | Planejamento de operações | D-R34 **[validar]** | App do analista e sala de análise (MLS); índice do nó de IA | Nunca maior que o da sala de origem e o do escopo; expurgo em cascata | Analistas credenciados do escopo, só de salas com concessão (GD-15) |
+| Concessão de escopo (ADR-0008) | A (administrador que concede) | Autorizar a entrada da sala num escopo de análise | Idem | Estado do grupo (cifrado); hash na trilha | Vida da sala | Membros da sala; Auditor (hash) |
+| Registro de perguntas à IA de análise (ADR-0008) | A (analista) e B (citados) | Controle do uso da análise (R42) | **[validar]** | Cifrado para a chave de quórum de registros | Prazo do escopo + apuração | Quórum presencial |
+| Gabarito facial do dono (GD-18; doc 07 seção 7.2) | A | Verificar quem acessa o aparelho | Dado biométrico sensível (art. 11) **[validar]** | Só no aparelho, cifrado por chave não exportável do hardware seguro; nunca no servidor, backup ou exportação | Vida do aparelho; zerado no nível 4 e na devolução | Ninguém: o core compara |
+| Registro selado de investigação sigilosa (ADR-0010) | A (investigados, participantes) e B | Apuração de vazamento ou infiltrado sem alertar o investigado | **[validar]** | `custody`, cifrado para a chave de quórum de registros (série de investigação); só hash na trilha | D-R38 | Quórum presencial |
+| Retrato de metadados preservado e relatório de rastro (ADR-0010) | A (e B) | Preservação e resultado da apuração | **[validar]** | Retrato: mídia offline cifrada para a chave de quórum; em sala comum, só metadados, nunca o cifrado MLS (GD-23). Relatório: pacote de evidência (RF67) ao procedimento e cópia no registro selado | D-R38. **Coleta nova (01g-G07d):** a preservação pode guardar pertença, horários e volumes além do prazo da seção 8.2 | Quórum presencial com a base da regra 14; procedimento |
 
 Dado pessoal sensível (art. 5º, II) pode aparecer no conteúdo (origem racial, saúde, biometria de investigados etc.); o sistema **não classifica** o conteúdo, e por isso trata tudo como sigiloso por padrão.
 
@@ -93,7 +105,7 @@ Dado pessoal sensível (art. 5º, II) pode aparecer no conteúdo (origem racial,
 |---|---|---|
 | **Finalidade** | Uso restrito a operações da unidade; norma de uso | Finalidade escrita no ato interno e no RIPD |
 | **Adequação** | Funcionalidades ligadas à coordenação | Rever periodicamente novas funções contra a finalidade |
-| **Necessidade** | Sem número de telefone; codinome; sem histórico permanente; retenção curta | Revisar campos do cadastro; cifrar matrícula e nome |
+| **Necessidade** | Sem número de telefone; codinome; sem histórico permanente (exceto a cópia de custódia em sala sob custódia, com prazo máximo); retenção curta | Revisar campos do cadastro; cifrar matrícula e nome (D09) |
 | **Livre acesso** | Usuários consultam seu cadastro e eventos próprios | Procedimento da seção 6 |
 | **Qualidade** | Relatório de IA com citações e aviso de erro | Medir taxa de afirmações sem origem (E09) |
 | **Transparência** | Aviso no convite sobre nó de IA; norma de uso | **Aviso explícito de monitoramento** (seção 7) |
@@ -124,6 +136,8 @@ Recomendado **antes da Fase 1 em produção e obrigatoriamente antes do piloto**
 | **Expurgo × dever de guarda** | Ver seção 8 |
 | **Metadados** | Exposição a administrador de infraestrutura |
 | **Terceiros nas conversas (grupo B)** | Impossibilidade de informar o titular por sigilo investigativo; salvaguardas compensatórias |
+| **Investigação sigilosa de agentes** (ADR-0010) | Sem aviso ao investigado durante a apuração; CI, segunda autorização, impedimento, quórum e ordem judicial para conteúdo; contraditório depois; sem gravação oculta de sala comum |
+| **Reconhecimento facial e destruição por perfil** (GD-18) | Dado biométrico sensível; falso negativo e falso positivo; destruição do aparelho no perfil missão de campo |
 
 ---
 
@@ -132,7 +146,7 @@ Recomendado **antes da Fase 1 em produção e obrigatoriamente antes do piloto**
 ### 6.1 Grupo A (usuários)
 | Direito (art. 18) | Como atender |
 |---|---|
-| Confirmação e acesso | Relatório de cadastro, aparelho, eventos de integridade e consultas feitas à sua identidade |
+| Confirmação e acesso | Relatório de cadastro, aparelho, eventos de integridade e consultas feitas à sua identidade, observado o sigilo de investigação em curso, inclusive a sigilosa da ADR-0010 **[validar]** |
 | Correção | Pelo gestor, com registro |
 | Informação sobre compartilhamento | Declarar que dados não saem da instituição; quem acessa e em que condições |
 | Eliminação e oposição | Limitadas por dever legal e controle; resposta fundamentada |
@@ -148,7 +162,9 @@ Os direitos ficam condicionados à legislação específica e ao sigilo da inves
 ### 6.3 Requisições e ordens de autoridades externas
 
 - Toda ordem ou requisição de Ministério Público, polícia ou juízo chega **à instituição** e é tratada pelo responsável designado com o jurídico (playbook P11, doc 05). Nenhum operador ou administrador técnico responde diretamente.
-- O sistema **não possui conteúdo em claro** (regras 2 e 3). O que pode existir para entregar: mensagens cifradas, metadados do servidor e registros de auditoria (doc 02 seção 6.4). O rito deve dizer o que se entrega e registrar que o conteúdo é inacessível **por desenho**, não por recusa.
+- O servidor **não possui conteúdo em claro** (regras 2 e 3). O que pode existir para entregar: mensagens cifradas, metadados do servidor e registros de auditoria (doc 02 seção 6.4).
+- **Sala comum:** o rito registra que o conteúdo é inacessível **por desenho**, não por recusa, **salvo** o cache de aparelho revogado em poder da instituição, pelo rito da regra 14, dentro do prazo do segredo guardado (ADR-0006 item 8; 01e-E20).
+- **Sala sob custódia** (ADR-0003): a ordem judicial é **cumprida** por quórum presencial no HSM offline, no escopo pedido, com saída em pacote de evidência assinado. A **CI** é o comunicado interno que registra e tramita o pedido; **não substitui** a ordem judicial. Para pedido interno, a base é o processo administrativo com validação jurídica, registrado pela CI **[validar]**. A CI é obrigatória nos dois casos (01c-C23).
 - A jurisprudência encontrada (STJ afastou multa por impossibilidade técnica de interceptar mensagens cifradas) é favorável a essa posição, mas **precisa de confirmação** nos acórdãos e não trata de sistema institucional.
 - Conflito a decidir (D-R14): apreensão de aparelho por autoridade versus expurgo remoto.
 
@@ -157,15 +173,20 @@ Os direitos ficam condicionados à legislação específica e ao sigilo da inves
 O texto de convite e a norma de uso devem informar, **antes do primeiro uso**:
 1. Que o aplicativo verifica a integridade do aparelho e envia o resultado ao servidor.
 2. Que toda tela leva **marca d'água** que identifica o aparelho e a hora, e para que serve.
-3. Que há **nó de IA** na sala e que o administrador pode pedir análise do conteúdo (já previsto).
+3. Que há **nó de IA** na sala e que o administrador pode pedir análise do conteúdo (já previsto). Se a ADR-0008 for aceita: que a sala só entra no escopo de uma **sala de análise** entre operações por **concessão** do administrador, que aparece na própria sala (GD-15), e que a sala de análise devolve indícios com referência e sem trecho de conversa a analistas credenciados.
 4. Que há **trilha de auditoria** de metadados e quem pode consultá-la.
 5. Que o **registro de visualização** existe, se for adotado (doc 05 seção 3.3).
-   Que a **câmera frontal** é usada durante a leitura para detectar ausência, terceiros e câmera apontada, sem gravar imagem, e que há controle de **local** nas salas que o exigem (doc 07).
+   Que a **câmera frontal** é usada durante a leitura para detectar ausência, terceiros e câmera apontada, sem gravar imagem, e no **desbloqueio**, para verificar o rosto de quem acessa, com o gabarito só no aparelho (GD-18); e que há controle de **local** nas salas que o exigem (doc 07).
 6. Em que situações a **identidade real** pode ser vinculada ao codinome e por qual rito.
 7. Quanto tempo cada dado é guardado.
 8. Como falar com o encarregado.
+9. Se a sala é **sob custódia**: a marca aparece na sala; com a flag ligada, é o padrão, e sala comum só existe com motivo registrado e segunda assinatura (GD-14); há cópia institucional cifrada de **toda** mensagem, guardada até 5 anos a contar da conclusão (ou do expurgo, se não houver conclusão), aberta só por quórum presencial com CI e ordem judicial ou processo administrativo com validação jurídica; **apagar a mensagem para todos, a autodestruição, apagar ou concluir a operação não eliminam essa cópia** (D27; 01c-C09). Em sala de missão sob custódia, isso inclui a posição compartilhada pelo MLS (ADR-0008).
+10. Na **revinculação**: o termo de ciência e aceite tem foto e assinatura, fica cifrado para a chave de quórum, com prazo, e é exportado ao sistema da corporação (doc 07 seção 7.4).
+11. Na **revogação** do aparelho: o cache fica ilegível, mas não é destruído; o segredo que o abre fica guardado cifrado para a chave de quórum pelo prazo da apuração e só se abre por quórum presencial, com o aparelho em mãos (GD-13).
+12. Em **missão de campo**, o aparelho pode se apagar sozinho quando houver indício de captura (GD-18), sem detalhar os sinais.
+13. Que pode haver **investigação sigilosa** de vazamento ou infiltrado (ADR-0010), sem aviso durante a apuração: ela usa metadados, registros de atribuição e, com ordem judicial, a cópia de custódia das salas sob custódia; **nunca** grava sala comum nem acrescenta membro oculto; a preservação pode guardar metadados (não o conteúdo) por mais tempo que o normal (GD-23); quem for apontado tem contraditório no procedimento e, se a investigação for arquivada, é avisado como padrão (GD-22).
 
-**Como a ciência é registrada:** o agente assina o **Termo de Ciência e Autorização de Acesso** (docs/anexos/termo-de-ciencia-e-autorizacao.md) pelo **gov.br**, na presença do gestor, no momento do cadastro. A ativação do aparelho depende de assinatura válida da **versão vigente**. Nova versão = nova assinatura; sem ela o acesso é suspenso.
+**Como a ciência é registrada:** o agente assina o **Termo de Ciência e Autorização de Acesso** (docs/anexos/termo-de-ciencia-e-autorizacao.md) pelo **gov.br**, na presença do gestor, no momento do cadastro. A assinatura ocorre **fora do app**, na estação do gestor: o aparelho não fala com o gov.br e o CPF não é digitado nele (regra 4); o app só mostra o texto, a versão e o estado que o core recebe do servidor (doc 11, tela T02; 01g-G14). A ativação do aparelho depende de assinatura válida da **versão vigente**. Nova versão = nova assinatura; sem ela o acesso é suspenso.
 
 Cuidados de desenho:
 - O termo **não leva codinome nem identificador de aparelho**; quem liga o termo ao usuário é a referência interna no diretório (R58, R40).
@@ -228,9 +249,20 @@ O sistema foi desenhado para **destruir** conteúdo (expurgo criptográfico). **
 | Registro de visualização | **A definir** (curta) | Exclusão automática |
 | Logs de integridade | **A definir** | Exclusão automática |
 | Cadastro de usuário | Vínculo funcional + prazo de apuração | Anonimização ou eliminação após o prazo |
+| Cópia de trabalho de sala sob custódia | Conclusão da sala (RN18) | Destruição de chave (expurgo) |
+| Cópia de custódia (sala sob custódia) | Até 5 anos da conclusão, ou do expurgo sem conclusão **[validar]** | Destruição das chaves no HSM e nos backups dele, em cerimônia com recibo; com autorização arquivística (D-R5) **[validar]** |
+| Termo de revinculação com foto | **A definir (D-R30)** | Destruição da chave de quórum do termo |
+| Segredo de lease guardado (aparelho revogado) | Prazo da apuração (D-R35), no período de vencimento | Destruição da chave do período da classe no HSM; destruição antecipada com duas autorizações, que só exclui o registro (ADR-0006) |
+| Gabarito facial do dono | Vida do aparelho | Zerado no nível 4 e na devolução; nunca sai do aparelho |
+| Registro selado de investigação e retrato preservado (ADR-0010) | D-R38 | Destruição da chave do período da série de investigação, em cerimônia com recibo |
+| Qualquer item sob preservação da investigação sigilosa | Suspenso até a decisão | Ordem selada; o prazo volta a correr pelo saldo (ADR-0010 seção 8) |
 
 ### 8.3 Suspensão do expurgo (hipótese a decidir)
 Se o jurídico concluir que pode haver retenção legal, o projeto precisa de uma **ordem de preservação** assinada que impeça o expurgo automático por prazo daquela operação. Isso é mudança de requisito (afeta RN03, RN04 e o fluxo da seção 6.2 do doc 02) e deve entrar por ADR **antes** de implementar o expurgo (Fase 4).
+
+A custódia em sala sob custódia (ADR-0003) atende parte dessa hipótese sem quebrar a criptografia: a cópia fica guardada até 5 anos da conclusão, e a ordem de preservação suspende a eliminação. Em sala comum, continua valendo o parágrafo acima.
+
+A **investigação sigilosa** (ADR-0010 seção 8) tem preservação própria, por ordem selada: suspende a eliminação e a contagem do prazo das cópias de custódia e dos registros selados do escopo e guarda retratos de metadados cifrados para o quórum. **Não** suspende o expurgo nos aparelhos nem no nó de IA: reter ali, às escondidas, conteúdo que os membros acreditam apagado equivaleria a gravação oculta (GD-17). **Decidido (GD-23):** "expurgo suspenso" é a eliminação da cópia de custódia; metadados de sala comum podem ser preservados, nunca o cifrado MLS, com o retrato selado para quórum e aberto pela regra 14; a transparência diz que a guarda pode se alongar (seção 7 item 13). O jurídico confere a base dessa guarda alongada **[validar]**.
 
 ---
 
@@ -291,6 +323,10 @@ O resultado entra no RIPD e é revisto a cada mudança.
 | RL08 | Nenhum dado de produção em ambiente de desenvolvimento ou teste | 2 |
 | RL09 | Inventário de tratamento mantido e versionado em `docs/` | 3 |
 | RL10 | Aparelho só ativa com termo assinado da versão vigente; assinatura validada; hash do PDF e versão registrados; revalidação a cada versão | 7 |
+| RL11 | Termo de revinculação com foto: cifrado no aparelho para a chave de quórum, prazo definido, hash na trilha, exportação só pelo fluxo autorizado (sem a foto até D-R30) | 3, 8.2 |
+| RL12 | Marca de custódia visível na sala e texto de transparência sobre a cópia institucional, o prazo e quem a abre | 7 |
+| RL13 | Investigação sigilosa só pelo rito da ADR-0010; transparência genérica na norma e no termo; contraditório no procedimento | 7; ADR-0010 |
+| RL14 | Gabarito facial só no aparelho, cifrado por chave do hardware seguro; quadros só em memória | 3; doc 07 seção 7.2 |
 
 ---
 
@@ -326,3 +362,8 @@ Acrescentar à seção 4 do documento 03:
 6. Natureza da ciência do usuário e conteúdo da norma de uso.
 7. Retenção da trilha de auditoria e dos logs.
 8. Responsabilidade do operador (desenvolvedor, MDM) e cláusulas contratuais.
+9. Custódia: processo administrativo com validação jurídica (registrado por CI) como base para abrir; prazo de 5 anos a contar da conclusão; eliminação e autorização arquivística (Lei 8.159); motivo por perfil (investigação militar; corregedoria ou inquérito).
+10. Termo de revinculação com foto: base para dado sensível (art. 11), prazo de guarda, exportação ao sistema corporativo (D-R30).
+11. Investigação sigilosa (ADR-0010): base para abrir registros selados sem ordem judicial (processo administrativo com validação jurídica); CI que tramita como sigilosa; limite do direito de acesso do investigado durante a apuração; contraditório; aviso no arquivamento (D-R38); MP ou MPM como destinatário; Tema 977 do STF para o cache de aparelho.
+12. Reconhecimento facial (GD-18): base para o gabarito (art. 11) e regras da ANPD; uso da câmera no desbloqueio, além das cautelas da seção 3.5 do anexo de validação; destruição automática do aparelho em missão de campo.
+13. Preservação de metadados de sala comum na investigação sigilosa frente ao expurgo (ADR-0010 seção 8).

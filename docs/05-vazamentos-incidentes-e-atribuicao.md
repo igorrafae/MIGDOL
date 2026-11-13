@@ -14,8 +14,8 @@
 2. **Proporcionalidade.** Cada mecanismo de monitoramento tem finalidade escrita, é conhecido dos usuários e coleta o mínimo.
 3. **Nenhuma consequência sem apuração humana.** Alerta do sistema abre investigação; não pune nem bloqueia pessoa.
 4. **Contraditório.** Quem for apontado pode se manifestar antes de qualquer decisão.
-5. **Quem investiga não é quem opera.** O administrador da operação não conduz a apuração de vazamento da própria operação.
-6. **Tudo é registrado**, inclusive as consultas feitas pelos investigadores.
+5. **Quem investiga não é quem opera.** O administrador da operação não conduz a apuração de vazamento da própria operação. Na **investigação sigilosa** (ADR-0010), vale também o **impedimento**: quem está sob suspeita, ou opera as salas do escopo, não aprova, não participa de cerimônia, não revisa e não recebe o relatório.
+6. **Tudo é registrado**, inclusive as consultas feitas pelos investigadores. Na investigação sigilosa, o registro fica selado para o quórum, e a trilha guarda só o hash (ADR-0010 seção 5).
 
 ---
 
@@ -64,7 +64,7 @@ Recomendação para a v1: **marca visível + invisível, registro de visualizaç
 
 ### 3.3 Registro de visualização (adotado)
 
-O aparelho registra localmente que exibiu a mensagem ou anexo `X` e envia ao servidor, **cifrado para a chave de quórum (ADR-0003: mínimo 3 comandantes)** (não para o administrador da operação nem para o Auditor sozinho), um recibo `(id da mensagem, aparelho, hora)`. O servidor não lê o recibo. Uso restrito ao rito da seção 3.4.
+O aparelho registra localmente que exibiu a mensagem ou anexo `X` e envia ao servidor, **cifrado para a chave de quórum (ADR-0003: mínimo 3 comandantes, presencial, HSM offline)** (não para o administrador da operação nem para o Auditor sozinho), um recibo `(id da mensagem, aparelho, hora)`. O servidor não lê o recibo; o serviço `custody` o guarda. Uso restrito ao rito da seção 3.4.
 
 Pontos de projeto:
 - Aumenta a capacidade de atribuição; é adotado pela decisão da instituição (doc 06 seção 0).
@@ -74,13 +74,14 @@ Pontos de projeto:
 
 ### 3.4 Quebra de pseudonimato (decisão D-R2)
 
-As salas só conhecem o codinome; o diretório conhece a matrícula. Ligar um aparelho a uma pessoa é o ato mais sensível da apuração. Proposta:
+As salas só conhecem o codinome; o diretório guarda a matrícula **cifrada para a chave de quórum de pseudonimato** (D09; doc 02 seção 7.5). Ligar um aparelho a uma pessoa é o ato mais sensível da apuração. Proposta:
 
-1. Pedido formal da corregedoria, com número de procedimento, finalidade e escopo (quais aparelhos, qual período).
+1. Pedido formal da corregedoria, com número de procedimento, número da CI (obrigatório em todos os casos), finalidade e escopo (quais aparelhos, qual período), e a base: processo administrativo com validação jurídica, ou ordem judicial **[conferir]** (doc 01 RN20).
 2. Autorização do responsável pela homologação.
-3. Execução pelo **quórum de no mínimo 3 comandantes** (ADR-0003), conduzida pelo Auditor e com o Gestor presente. O sistema exige o quórum; nenhuma pessoa abre sozinha.
+3. Execução pelo **quórum presencial de no mínimo 3 comandantes**, com cartões, no HSM offline (ADR-0003), conduzida pelo Auditor e com o Gestor presente. O sistema exige o quórum; nenhuma pessoa abre sozinha.
 4. O resultado vai para o procedimento, não para quem pediu a análise de IA nem para o administrador da operação.
 5. Todo o ato é registrado na trilha de auditoria, com o escopo consultado.
+6. **Dentro de investigação sigilosa** (ADR-0010): o pedido corre no registro selado; o Auditor, o Gestor e o responsável pela homologação ficam sujeitos ao impedimento e, se impedidos, são substituídos por quem a instituição designar (D-R37); a trilha guarda só o hash.
 
 ### 3.5 Procedimento ao receber material vazado
 
@@ -99,6 +100,8 @@ flowchart TD
   J --> K[Contraditório e decisão]
   K --> L[Lições aprendidas e ajuste de controles]
 ```
+
+**Quando a equipe não pode saber** (suspeita sobre detentor do quórum, administrador da operação, Auditor, ou infiltrado não identificado), o mesmo procedimento corre pelo playbook **P1-S** (seção 5.4) e pela ADR-0010: registro selado, toda sessão com quórum de detentores não impedidos (GD-21), análise só na estação isolada, impedimento em todos os atos, e saída como relatório de rastro sem conversas.
 
 ### 3.6 Grau de confiança do relatório
 
@@ -194,8 +197,9 @@ Para cada um: **0–1 h** contenção, **1–24 h** apuração, **depois** corre
 
 | # | Cenário | 0–1 h | 1–24 h | Depois |
 |---|---|---|---|---|
-| P1 | **Material vazado** (foto, texto) | Preservar com hash; abrir SEV1; restringir quem pode ver as salas envolvidas se houver suspeita de continuidade | Análise de marca (3.5); reduzir suspeitos; avaliar expurgo ou renovação de chaves das salas | Relatório com grau de confiança; corregedoria; ajustar compartimentação |
-| P2 | **Aparelho perdido, roubado ou apreendido** | Revogar certificado; suspender aparelho; avaliar apagamento remoto do aparelho e modo rastreio (doc 07 seção 7.4) **(se a apreensão foi por autoridade, não destruir: só suspender e revogar até decisão do jurídico, D-R14; níveis 3 e 4 do doc 07 seção 7.1)**; avisar administradores das operações dele | Remover o aparelho dos grupos (novas chaves de época); verificar se houve acesso após o evento | Substituir aparelho; registrar; avaliar coação |
+| P1 | **Material vazado** (foto, texto) | Preservar com hash; abrir SEV1; restringir quem pode ver as salas envolvidas se houver suspeita de continuidade. **Se a suspeita recai sobre quem conduziria ou aprovaria a apuração, ou se agir na sala alertaria o investigado: P1-S** | Análise de marca (3.5); reduzir suspeitos; avaliar expurgo ou renovação de chaves das salas | Relatório com grau de confiança; corregedoria; ajustar compartimentação |
+| P1-S | **Investigação sigilosa** de vazamento ou infiltrado, quando a equipe não pode saber (ADR-0010; GD-16, GD-17) | Iniciador (detentor do quórum ou corregedoria) registra a CI, que tramita como sigilosa **[conferir]**; preservar o material com hash; **não** avisar a sala, não mudar membros, não pedir nada ao nó de IA; nenhuma consulta específica ao servidor vivo | Pedido e segunda autorização independente (de fora da classe dos detentores quando a suspeita a alcança, GD-22) assinados na estação isolada; **toda sessão com quórum presencial de detentores não impedidos** (GD-21); impedimento conferido pela estação; ordem selada de preservação com lista de bloqueio; retrato por ato de liberação do backup de rotina; nível 1 (metadados e registros selados de atribuição) com CI validada, a base da regra 14; nível 2 (conteúdo) só com ordem judicial | Relatório de rastro sem conversas, revisado e assinado por duas pessoas não impedidas; pacote de evidência (RF67) à corregedoria e ao jurídico, para o MP pedir cautelares; nenhuma medida automática (regra 11); contraditório no procedimento; levantamento da preservação; lições aprendidas sem expor o escopo |
+| P2 | **Aparelho perdido, roubado ou apreendido** | Trava imediata (nível 3: servidor para de entregar o segredo de lease); revogar certificado (revogar **não destrói**: o segredo de lease fica selado para quórum, GD-13; destruí-lo exige duas autorizações); modo rastreio pela sala de resposta; pedir apagamento remoto, que exige segunda autorização (doc 07 seção 7.4) **(se a apreensão foi por autoridade, não destruir: só suspender e revogar até decisão do jurídico, D-R14; níveis 3 e 4 do doc 07 seção 7.1)**; avisar administradores das operações dele | Administrador da sala, ou substituto, remove o aparelho dos grupos no prazo (novas chaves de época); verificar se houve acesso após o evento | Substituir aparelho por revinculação (só operação ativa, aprovação dupla); registrar; avaliar coação |
 | P3 | **Chave de administrador comprometida** | Revogar a chave; bloquear ordens com ela; avisar membros | Reemitir chave; revisar ordens e autorizações assinadas desde o possível comprometimento | Revisão do procedimento de guarda |
 | P4 | **Servidor de mensagens comprometido** | Isolar; preservar imagens; **não** apagar logs; avisar comitê | Avaliar metadados expostos; verificar se clientes rejeitaram tentativas (assinaturas); reconstruir a partir de imagem confiável | Rotacionar credenciais e certificados; relatório; ajustar controles |
 | P5 | **Nó de IA comprometido** | Desconectar da rede; reiniciar após preservar; remover o nó das salas | Listar salas afetadas (conteúdo em claro possivelmente exposto); decidir expurgo; renovar chaves | Reconstrução; revisão de isolamento |
@@ -204,7 +208,7 @@ Para cada um: **0–1 h** contenção, **1–24 h** apuração, **depois** corre
 | P8 | **Vulnerabilidade crítica em dependência** | Avaliar exploração; mitigar (desativar recurso, regra de rede) | Corrigir e distribuir release de emergência | Atualizar SBOM e registro de riscos |
 | P9 | **Insider de infraestrutura** | Suspender acessos; preservar sessões gravadas | Revisar o que foi acessado; envolver corregedoria | Revisão de separação de funções |
 | P10 | **Expurgo ou convite indevido** | Contenção conforme o caso; se expurgo, não há reversão: registrar | Comunicar impactados; reconstruir a operação se necessário | Reforçar confirmações e treinamento |
-| P11 | **Ordem judicial ou requisição externa** (MP, polícia, juiz) | Encaminhar ao responsável institucional e ao jurídico; **ninguém da operação responde diretamente**; preservar o que existe | Responder só com o que o sistema possui (cifrado, metadados e registros de auditoria, conforme doc 02 seção 6.4); documentar que o conteúdo é inacessível por desenho | Avaliar ordem de preservação (RF58) e ajustar o rito |
+| P11 | **Ordem judicial ou requisição externa** (MP, polícia, juiz) | Encaminhar ao responsável institucional e ao jurídico; **ninguém da operação responde diretamente**; preservar o que existe; registrar a CI que tramita o pedido (a CI não substitui a ordem) | **Sala sob custódia:** cumprir a ordem judicial por quórum presencial no HSM offline, só no escopo pedido, com saída em pacote de evidência assinado (ADR-0003). **Sala comum:** responder só com o que o sistema possui (cifrado, metadados e registros de auditoria, conforme doc 02 seção 6.4) e documentar que o conteúdo é inacessível por desenho, **salvo** o cache de aparelho revogado em poder da instituição, pelo rito da regra 14, dentro do prazo do segredo guardado (ADR-0006 item 8; 01e-E20) | Avaliar ordem de preservação (RF58) e ajustar o rito |
 
 ### 5.5 Comunicação
 - **Interna:** quem precisa saber, no nível necessário. Não anunciar detalhes que ajudem o atacante.
@@ -249,6 +253,7 @@ Para cada um: **0–1 h** contenção, **1–24 h** apuração, **depois** corre
 |---|---|
 | Teste de mesa de incidente (um playbook por vez) | Semestral |
 | Simulação de vazamento com teste cego de atribuição (F01–F03) | Anual, e antes do piloto |
+| Teste de mesa do P1-S (impedimento, retrato do backup, cerimônia com detentores não impedidos, relatório sem conversas) | Anual, e antes do piloto |
 | Teste de restauração do backup | Trimestral |
 | Teste de revogação e expurgo remoto de aparelho | Semestral |
 | Pentest | Anual |
@@ -265,3 +270,6 @@ Métricas: tempo para detectar (MTTD), tempo para conter (MTTR), taxa de atribui
 4. Retenção do registro de visualização e dos logs de integridade (documento 06).
 5. Quais órgãos externos precisam ser comunicados em cada tipo de incidente.
 6. Local e custodiante das cópias forenses e dos hashes publicados.
+7. ~~Procedimento para nó de campo capturado ligado~~: **decidido (GD-18):** destruição imediata, aceitando perder o não sincronizado (ADR-0004 item 13). Restam os gatilhos (D-R39) e o retorno com o nó destruído (01c-C17). Sem tempo de destruir, o limite técnico é a validade curta da credencial do nó.
+8. Quem recebe, e em quantos minutos, o alerta de coação e a posição em perda pela sala de resposta (doc 07 seção 7.4; pergunta 13 da revisão).
+9. Investigação sigilosa (ADR-0010): quem dá a segunda autorização e os substitutos não impedidos (D-R37); prazo, revisão periódica, contraditório e aviso no arquivamento (D-R38); base do nível 1b sem ordem judicial **[conferir]**.

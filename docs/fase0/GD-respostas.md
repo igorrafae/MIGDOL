@@ -26,3 +26,38 @@ Respostas às perguntas 1, 2, 9 e 11 da revisão de desenho (`01-revisao-desenho
 - A configuração é **assinada** no `instituicao.yaml` e fica **visível aos membros**. Mudá-la exige cerimônia registrada.
 - Mudar a configuração **não retroage**: salas criadas antes da mudança não ganham cópia de custódia.
 - Atende ao RNF-T3: a configuração é por instituição, sem mudar o código.
+
+## Decisões após a revisão do Fable (01c), 12/11/2026
+
+O responsável aceitou as três recomendações:
+
+| # | Tema | Decisão |
+|---|---|---|
+| GD-12 | Regra 2 (D30, pergunta 4 do 01c) | **Aprovado** o texto proposto no `01b` seção 3, com os ajustes de C19 e incluindo Swift (ADR-0007): chaves de membro (MLS, assinatura, cache) só no core Rust; chaves de hardware (StrongBox, Secure Enclave) não saem do hardware, e Kotlin/Swift só seguram a referência, com o uso chamado a partir do core; chaves da instituição (AC, quórum, cerimônia) ficam em HSM. A regra 7 (D31) **não** foi decidida e continua pendente |
+| GD-13 | Revogação (C01, pergunta 6) | Revogar credencial e destruir segredo são **atos separados**. Em **toda** revogação o segredo de lease é guardado cifrado para a chave de quórum, com prazo igual ao da apuração. Destruir exige duas autorizações e registro. A classe entra na lista da regra 14 |
+| GD-14 | Custódia com a flag ligada (D-R29, pergunta 1) | **Opção B:** com a flag ligada, a custódia é o padrão; sala comum só com motivo registrado e segunda assinatura; salas de sistema sempre comuns |
+
+Também valem as recomendações do 01c sem decisão do responsável: R66 volta a **Alto** até o aceite do comitê; na conclusão, quando o solicitante já é comandante ou subcomandante, a terceira assinatura passa ao superior imediato do solicitante, definido na criação.
+
+## Decisões após a revisão do Fable (01e), 12/11/2026
+
+| # | Tema | Decisão |
+|---|---|---|
+| GD-15 | Nível 2 da ADR-0008 (planejamento) | O analista lê indicadores nominais por **concessão** da sala de origem, com CI e/ou autorização do comandante; a concessão é registrada. A regra 3 **não muda**: o painel mostra só o nível 1a; agregados derivados de conteúdo vão ao app por MLS |
+| GD-16 | Investigação sigilosa de vazamento ou infiltrado | Caminho próprio, para quando a equipe não pode saber (ex.: suspeita sobre um detentor do quórum). **Qualquer** detentor do quórum ou a corregedoria pode **iniciar**; exige CI **e** uma segunda autorização independente; quem está sob suspeita fica **impedido** de aprovar; os membros não são avisados; o ato fica num **registro selado** para o quórum. A análise roda **só no ambiente isolado** (nó de análise), ninguém lê conversa, e a saída é um **relatório de rastro de suspeita, sem conversas**, para o MP pedir medidas cautelares (ordem judicial, afastamento do investigado). Dois níveis [conferir]: sem ordem judicial, só metadados e sinais de atribuição (doc 05); com ordem judicial, também conteúdo, dentro do ambiente isolado. Relatório revisado e assinado por pessoa antes do envio (regra 11) |
+| GD-17 | Gravação para estes casos | Aberta a investigação, as salas do escopo entram em **preservação**: o expurgo e a contagem do prazo de guarda das cópias de custódia ficam suspensos, por ordem selada, até a decisão. Gravação **para frente** só existe onde há custódia (com a flag ligada, a custódia é o padrão, GD-14). **Sala comum não é gravada às escondidas:** isso exigiria membro oculto no grupo MLS, que é porta dos fundos e contraria o desenho (ADR-02, regra 14). Pendente de confirmação do responsável |
+| GD-18 | Destruição na captura | **Nó de campo capturado:** destruição imediata, aceitando perder o que não foi sincronizado; **exceção escrita à GD-13**, só para o nó de campo. **Celular:** reconhecimento facial de quem acessa, modelo no aparelho, sem terceiros (regra 12), com vivacidade e modelo do rosto no hardware seguro. A face **nunca decide sozinha**: destrói com face errada **e** PIN errado, ou com PIN de coação. **Por perfil:** destruição imediata ativa em missão de campo (Exército, captor adversário); no uso policial urbano vale suspender e revogar sem destruir (D-R14) |
+| GD-19 | Interface e plataformas | **ADR-0007 aceita:** interface nativa (Compose, SwiftUI) e painel web Linux. Documentar o **protótipo de interface** dos três projetos e o **protocolo de usabilidade** (V09) num doc 11 |
+| GD-20 | Suíte candidata | **P-256** como curva candidata até a escolha do HSM (recomendação do Fable, aceita no pacote "sim, registre") |
+
+## Decisões após a revisão do Fable (01g), 12/11/2026
+
+O responsável aceitou as cinco recomendações do `01g`:
+
+| # | Tema | Decisão |
+|---|---|---|
+| GD-21 | Quórum na investigação sigilosa (01g-G01) | **Toda sessão** da investigação sigilosa, em qualquer nível, exige quórum presencial de detentores **não impedidos**. Os níveis diferem só pela base (CI validada ou ordem judicial) |
+| GD-22 | Controle externo do rito (01g-G02, D-R37, D-R38) | Quando a suspeita alcança os detentores, a segunda autorização vem **de fora** dessa classe; no máximo **duas renovações**, cada uma com quórum; o revisor não é o iniciador nem a segunda autorização; **aviso ao investigado no arquivamento** como padrão; registro guardado até a revisão final |
+| GD-23 | GD-17 confirmada, leitura de R3-2 | Na preservação, "expurgo suspenso" é a eliminação da cópia de custódia, não o expurgo nos aparelhos. Metadados de sala comum podem ser preservados, **nunca o cifrado MLS**, com o retrato selado para quórum e aberto pela regra 14; a transparência aos membros diz que a guarda pode se alongar |
+| GD-24 | Gatilhos de destruição no perfil missão (R3-8, D-R40, 01g-G11, G12) | Número de PINs errados só depois de medir (proposta: um PIN errado, se a medição permitir). "Outra pessoa" exige **duas capturas**. Falha de vivacidade não conta para destruir até ser medida à parte. Medir o acionamento acidental do PIN de coação antes de ligá-lo ao nível 4 em campo |
+| GD-25 | Regra 12 (R3-3) | Escrever na regra: o gabarito facial fica só no aparelho, cifrado por chave de hardware, nunca é enviado; a câmera só é usada em primeiro plano, na tela de conteúdo e no desbloqueio |

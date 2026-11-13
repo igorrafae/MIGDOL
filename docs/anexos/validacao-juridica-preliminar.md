@@ -109,7 +109,7 @@ A frase "privacidade é responsabilidade da polícia" está correta em um sentid
 
 | Tema da jurisprudência | O que a arquitetura já faz | Lacuna ou ajuste |
 |---|---|---|
-| Ordem para entregar conteúdo ou interceptar | Servidor só tem cifrado; chaves só no core (regras 2 e 3); MLS sem custódia | Registrar que a impossibilidade é **por desenho**; criar rito e responsável institucional para requisições externas (doc 06 seção 6.3, playbook P11) |
+| Ordem para entregar conteúdo ou interceptar | Servidor só tem cifrado; chaves só no core (regras 2 e 3). Sala comum: MLS sem custódia. Sala sob custódia (ADR-0003, revisão de 2026-11-12): cópia cifrada para chave de quórum, aberta por quórum presencial | Sala comum: registrar que a impossibilidade é **por desenho**. Sala sob custódia: a ordem é cumprida pelo rito da ADR-0003. Criar rito e responsável institucional para requisições externas (doc 06 seção 6.3, playbook P11) |
 | Multa e bloqueio por descumprimento | Sistema interno e on-prem, sem oferta ao público | Manter representante e canal institucional; o destinatário de uma ordem é a instituição, não um provedor |
 | Espelhamento ao estilo WhatsApp Web | Sem cliente web ou aparelho companheiro; sessão única por aparelho; `FLAG_SECURE`; detecção de projeção | Declarar em requisito que **não existe vínculo de segundo cliente**; o nó de IA é membro **declarado**, nunca oculto |
 | Aparelho apreendido por autoridade | SQLCipher, chave em hardware, lease de 12 h; P2 prevê expurgo remoto | **Conflito:** expurgo remoto depois de apreensão legal pode ser lido como destruição de prova; decisão D-R14 |

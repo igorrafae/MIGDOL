@@ -21,6 +21,8 @@
 
 **Objetivo.** Um aplicativo de mensagens institucional, cifrado ponta a ponta, sem histórico permanente, em que o administrador da operação controla retenção, exportação e destruição dos dados, e em que cada vazamento seja dificultado e, quando ocorrer, atribuível a um usuário.
 
+**Exceção: sala sob custódia** (ADR-0003, GD-1). Onde a instituição liga a custódia no `instituicao.yaml` (Exército: ativa; polícia: desligada por padrão), a sala guarda uma cópia institucional cifrada para a chave de quórum, por até 5 anos a contar da conclusão. Nas salas comuns, vale o objetivo acima sem exceção.
+
 **O que o projeto não promete.** Nenhum software impede que alguém fotografe a tela com outro aparelho ou copie à mão o que leu. O projeto reduz a superfície de vazamento, desencoraja e permite atribuir a origem. Essa limitação precisa estar clara para o patrocinador desde o início.
 
 ---
@@ -29,7 +31,7 @@
 
 | # | Decisão | Motivo |
 |---|---|---|
-| D1 | App nativo via Capacitor, **não PWA** | Bloqueio de captura, detecção de depuração e chaves em hardware só existem em app instalado |
+| D1 | App nativo, **não PWA**. A ADR-0007, **aceita** (GD-19), troca o Capacitor por telas nativas (Compose; SwiftUI depois do estudo do iOS) a partir da Fase 1 | Bloqueio de captura, detecção de depuração e chaves em hardware só existem em app instalado |
 | D2 | **Android gerenciado** (MDM) na v1; iOS em fase posterior | No iOS só é possível detectar captura, não bloquear |
 | D3 | Identidade **sem número de telefone**: chave gerada no hardware do aparelho, cadastro presencial por QR, vínculo com matrícula | Elimina SIM swap e exposição do número pessoal |
 | D4 | Cifra ponta a ponta com **MLS (RFC 9420)** e AES-256-GCM | Grupos/canais grandes com remoção eficiente de membros; biblioteca auditada em vez de protocolo próprio |
@@ -53,7 +55,7 @@
 - **Busca textual rápida no aparelho**, sobre o que está no cache local cifrado.
 - **Botão "Analisar operação"** exclusivo do administrador: resumo, linha do tempo, riscos.
 - **Anexos apenas para visualização**; exportar exige autorização assinada do administrador.
-- **Kill-switch**: o administrador apaga a operação e tudo ligado a ela é destruído.
+- **Kill-switch**: o administrador apaga a operação e tudo ligado a ela é destruído. Em sala sob custódia, a cópia de custódia segue o prazo de guarda, contado do expurgo quando não houve conclusão (RN04; ADR-0003 seção 7). Se o kill-switch de um administrador continua ao lado da conclusão com três assinaturas: pergunta 5 do 01c.
 - **Chaves com prazo de validade**: aparelho que fica offline além do prazo perde acesso sozinho.
 
 ### 3.2 Ideias para avaliar depois
@@ -86,10 +88,15 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | Papel | Quem é | Pode |
 |---|---|---|
 | **Gestor do sistema** | Responsável institucional pela plataforma | Cadastrar e revogar usuários e aparelhos; criar administradores de operação. Não lê conteúdo |
-| **Administrador de operação** | Chefe da operação | Criar operação e canais; convidar e remover membros; definir retenção; autorizar exportação; pedir análise de IA; acionar expurgo |
+| **Administrador de operação** | Chefe da operação: o **comandante da missão**; substituto, o **subcomandante** (GD-11; se vale para toda operação ou só para a missão de campo: pergunta 9 do 01c) | Criar operação e canais; convidar e remover membros; definir retenção; autorizar exportação; pedir análise de IA; acionar expurgo; assinar a conclusão |
 | **Operador** | Agente da equipe | Enviar e ler mensagens e anexos; buscar; pedir correção de texto |
-| **Auditor** | Corregedoria / controle interno | Consultar a trilha de metadados. Não lê conteúdo |
+| **Auditor** | Corregedoria / controle interno | Consultar a trilha de metadados; a corregedoria pode **iniciar** investigação sigilosa (ADR-0010). Não lê conteúdo |
 | **Nó de IA** | Serviço on-premises | Membro técnico da sala; processa OCR, embeddings, correção e análise. Sempre visível na lista de membros |
+| **Equipe de inteligência** | Analistas da unidade de inteligência | Marcar a sala como ativa (RN18) |
+| **Solicitante** | Quem pediu a abertura da operação | Assinar a conclusão (RN18). Se o solicitante for o comandante ou o subcomandante, assina no lugar dele o **superior imediato** do solicitante, definido na criação |
+| **Analista de inteligência** | Analista com credencial em todo o escopo de uma sala de análise (ADR-0008 e ADR-0009, propostas; depois da v1) | Ver indicadores do nível 2 e perguntar à IA, como membro da sala de análise, só sobre salas que concederam entrada no escopo (GD-15). Não lê conversas das salas do escopo |
+| **Chefe da inteligência e superior da área** | Chefias | Aprovar a revinculação (RN19). Não leem conteúdo |
+| **Comandantes detentores de parte** | N comandantes com cartão (D-R24) | Abrir dado cifrado da instituição só em quórum presencial de no mínimo 3, em HSM offline (RN20); iniciar investigação sigilosa (ADR-0010), da qual ficam fora se impedidos. Não leem nada no dia a dia |
 
 ---
 
@@ -98,21 +105,25 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | ID | Regra |
 |---|---|
 | RN01 | Toda mensagem e todo anexo são cifrados no aparelho do remetente. O servidor de mensagens nunca tem acesso a texto em claro. |
-| RN02 | O servidor guarda apenas mensagens cifradas **ainda não entregues**, por prazo máximo configurável (padrão: 72 h). Entregue ou vencido, o registro é apagado. |
-| RN03 | Cada operação tem uma política de retenção definida pelo administrador na criação (ex.: 24 h, 7 dias, até o encerramento). Vencido o prazo, o conteúdo some do aparelho e do nó de IA. |
-| RN04 | Quando o administrador apaga a operação, são destruídos: chaves da operação, mensagens em cache nos aparelhos, anexos, textos de OCR, embeddings e relatórios de IA. Permanece somente o registro de auditoria de que a operação existiu e foi expurgada. |
+| RN02 | O servidor guarda apenas mensagens cifradas **ainda não entregues**, por prazo máximo configurável (padrão: 72 h). Entregue ou vencido, o registro é apagado. **Exceção:** em sala sob custódia, o serviço `custody` guarda a cópia de custódia (cifrada para a chave de quórum, ilegível para o servidor) até o prazo de guarda; e os registros cifrados para quórum (evidência, visualização, termo) seguem o prazo próprio (ADR-0003). |
+| RN03 | Cada operação tem uma política de retenção definida pelo administrador na criação (ex.: 24 h, 7 dias, até o encerramento). Vencido o prazo, o conteúdo some do aparelho e do nó de IA. Na **conclusão** (RN18), tudo sai dos aparelhos e do nó de IA. |
+| RN04 | Quando o administrador apaga a operação, ou ela é concluída, são destruídos: chaves da operação, mensagens em cache nos aparelhos, anexos, textos de OCR, embeddings e relatórios de IA. **Sala comum:** permanece somente o registro de auditoria de que a operação existiu e foi expurgada. **Sala sob custódia:** permanece também a cópia de custódia até o fim do prazo de guarda; o painel e os recibos dizem isso, e nunca "destruído" para o que continua guardado (D27). |
 | RN05 | Um usuário só entra no sistema por cadastro presencial feito pelo gestor, com QR de uso único e vínculo à matrícula. |
 | RN16 | O aparelho só é ativado depois que o agente assina, via gov.br e na presença do gestor, o **Termo de Ciência e Autorização de Acesso** (docs/anexos/termo-de-ciencia-e-autorizacao.md). Cada nova versão do termo exige nova assinatura; sem ela, o acesso é suspenso. |
 | RN06 | Um usuário só entra em uma operação por convite do administrador daquela operação. |
 | RN07 | Anexos são exibidos dentro do app. Salvar fora do app exige autorização do administrador, individual por arquivo e por usuário, com validade. A cópia exportada leva marca d'água e a exportação é registrada. |
 | RN08 | O app não abre conteúdo se o aparelho estiver em estado inseguro (ver RNF-D). O evento é registrado e o administrador é avisado. |
-| RN09 | Relatórios de análise de IA são visíveis apenas ao administrador da operação. Todos os membros sabem que o nó de IA participa da sala. |
+| RN09 | Relatórios de análise de IA são visíveis apenas ao administrador da operação. Todos os membros sabem que o nó de IA participa da sala. A ADR-0008 (proposta) acrescenta a **sala de análise**: indícios entre operações, com referência e sem trecho de conversa, para analistas com credencial no escopo, só de salas cujo administrador concedeu a entrada no escopo, com CI e/ou autorização do comandante, de forma visível aos membros (GD-15); se aceita, esta regra e a transparência (doc 06 seção 7) mudam. |
 | RN10 | Aparelho que não renova sua autorização dentro do prazo (padrão: 12 h) perde acesso ao cache local, mesmo sem receber ordem de expurgo. |
 | RN11 | A trilha de auditoria registra quem, quando e o quê em nível de evento (cadastro, convite, remoção, exportação, alerta de integridade, expurgo). Nunca registra conteúdo de mensagem. |
 | RN12 | Remoção de um membro troca as chaves da sala; o removido não lê nada do que for enviado depois. |
 | RN13 | Copiar e colar texto para fora do app é bloqueado. Notificações do sistema não exibem conteúdo. |
 | RN14 | Nenhuma decisão contra pessoa é tomada automaticamente a partir de marca d'água, alerta de integridade ou IA. Vazamento é apurado por pessoas, com contraditório (doc 05). |
 | RN15 | O usuário é informado, antes do primeiro uso, de tudo que o sistema observa e de como a identidade real pode ser ligada ao codinome (doc 06 seção 7). |
+| RN17 | **Tipo da sala** (ADR-0003, GD-1, GD-2, GD-14): com a flag de custódia da instituição desligada, toda sala nasce **comum**. Com a flag ligada, a sala nasce **sob custódia** por padrão; nasce comum só com **motivo registrado** e **segunda assinatura** de pessoa distinta do criador (D-R36). **Salas de sistema** (sala de resposta, doc 07 seção 7.4) são sempre comuns. A marca é feita na criação, assinada, visível aos membros e irreversível. Mudar a flag é cerimônia registrada e não retroage. |
+| RN18 | **Ciclo da sala** (GD-3): criada → **ativa** (marcada pela equipe de inteligência) → **concluída** → expurgada. A conclusão exige o número e o hash do relatório interno assinado eletronicamente no sistema corporativo (o relatório não entra no MIGDOL) e as assinaturas, no app, de três pessoas distintas: **comandante da missão**, **subcomandante** e **solicitante**. Quando o solicitante é o comandante ou o subcomandante, a terceira assinatura é do **superior imediato do solicitante**, definido na criação. Os papéis ficam no estado autenticado do grupo desde a criação; quem autoriza trocar o titular de um papel durante a operação está pendente (pergunta 3 do 01c). Signatário que não é membro assina sobre o identificador opaco da sala, o número e o hash do relatório, sem ver conteúdo. Sala comum: expurgo total na conclusão. Sala sob custódia: expurgo da cópia de trabalho na conclusão; a cópia de custódia fica até 5 anos a contar da conclusão (ou do expurgo, se não houve conclusão) e depois é eliminada com recibo. |
+| RN19 | **Revinculação** (GD-4): só em operação ativa; aprovação dupla (chefe da inteligência e superior da área); termo de ciência e aceite do proprietário, com foto e assinatura no app; histórico enviado pelo aparelho de outro membro pelo MLS. Não usa custódia nem decifra dado da instituição (doc 07 seção 7.4). |
+| RN20 | **Abertura institucional** de dado cifrado (custódia, evidência, registros, termo, localização, matrícula, segredo de lease guardado): só por quórum presencial de no mínimo 3 comandantes, com cartões, em HSM offline, com **CI** (registra e tramita o pedido em todos os casos) e base registrada: ordem judicial (cumprida), ou processo administrativo com validação jurídica **[conferir]**. A CI não substitui ordem judicial (GD-6; 01c-C23). |
 
 ---
 
@@ -125,8 +136,8 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RF01 | Cadastro de aparelho por QR de uso único, com geração de chaves no hardware seguro e atestação do aparelho | Essencial |
 | RF02 | Desbloqueio do app por biometria ou PIN a cada abertura e após inatividade | Essencial |
 | RF03 | Exibição de codinome; matrícula e nome real nunca trafegam nas salas | Essencial |
-| RF04 | Verificação entre membros por código de segurança (comparação presencial ou por QR) | Importante |
-| RF05 | Revogação imediata de aparelho pelo gestor | Essencial |
+| RF04 | Verificação entre membros por código de segurança **por sala e por época** (muda a cada commit), derivado do `epoch_authenticator` do MLS **[verificar no spike]**, por comparação presencial ou por QR; também revela partição total na reunificação (ADR-0005 item 2e; 01e-E16) | Importante |
+| RF05 | Revogação imediata de aparelho pelo gestor, sem destruir: o segredo de lease fica selado para a chave de quórum (RF91) | Essencial |
 | RF06 | Termo de Ciência e Autorização assinado eletronicamente (gov.br) no cadastro; assinatura validada, versão e resumo guardados; revalidação a cada nova versão. Contingência em três vias, com acesso provisório limitado e ratificação (doc 06 seção 7.1) | Essencial |
 
 ### 6.2 Operações, canais e mensagens
@@ -139,8 +150,8 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RF13 | Enviar foto tirada no app, sem passar pela galeria do aparelho | Essencial |
 | RF14 | Enviar documento e áudio | Importante |
 | RF15 | Responder, mencionar e reagir a mensagens | Desejável |
-| RF16 | Apagar mensagem para todos (remetente ou administrador) | Importante |
-| RF17 | Mensagem com prazo próprio de autodestruição, menor que o da operação | Desejável |
+| RF16 | Apagar mensagem para todos (remetente ou administrador). Em sala sob custódia, a cópia de custódia continua (ADR-0003 seção 3) | Importante |
+| RF17 | Mensagem com prazo próprio de autodestruição, menor que o da operação. Em sala sob custódia, a cópia de custódia continua | Desejável |
 
 ### 6.3 Anexos e controle de exportação
 
@@ -175,15 +186,28 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 |---|---|---|
 | RF50 | Expurgo da operação por ordem assinada pelo administrador, verificada por cada aparelho | Essencial |
 | RF51 | Confirmação reforçada antes do expurgo (biometria + digitar o nome da operação) | Essencial |
-| RF52 | Painel do administrador com situação do expurgo por aparelho (confirmado / pendente / expirará por prazo) | Importante |
+| RF52 | Painel do administrador com situação do expurgo por aparelho (confirmado / pendente / expirará por prazo) e, em sala sob custódia, a data até a qual a cópia de custódia fica guardada | Importante |
 | RF53 | Consulta à trilha de auditoria pelo perfil Auditor | Essencial |
 | RF54 | Expurgo com dupla custódia, configurável por operação | Desejável |
 | RF55 | Registro de visualização cifrado para a chave de quórum (ADR-0003), para reduzir o conjunto de suspeitos em vazamentos (adotado; doc 05 seção 3.3) | Importante |
-| RF56 | Quebra de pseudonimato (codinome → pessoa) somente por quórum de no mínimo 3 comandantes (ADR-0003), com registro (doc 05 seção 3.4) | Essencial |
+| RF56 | Quebra de pseudonimato (codinome → pessoa) somente por quórum presencial de no mínimo 3 comandantes em HSM offline (ADR-0003), com registro (doc 05 seção 3.4); matrícula cifrada para a chave de quórum no diretório | Essencial |
 | RF57 | Alertas de segurança sem conteúdo para monitoramento (doc 05 seção 4) | Essencial |
 | RF58 | Ordem de preservação que suspende o expurgo de uma operação, se o jurídico decidir que é necessária (doc 06 seção 8.3) | A decidir |
 | RF67 | Pacote de evidência assinado para qualquer material que sair do sistema (hash, assinatura, cadeia de custódia); print não é meio de prova | Proposto |
 | RF68 | Rito de requisição externa (doc 06 seção 6.3) e requisito de que não existe vínculo de segundo cliente nem espelhamento oficial | Proposto |
+| RF82 | Marca de custódia no estado autenticado do grupo: assinada na criação, conferida contra o `instituicao.yaml` assinado (e o histórico assinado das versões), visível aos membros, irreversível; com a flag ligada, marca "comum" só com motivo e duas assinaturas, e sala de sistema sempre comum; cópia de custódia HPKE em toda mensagem de sala sob custódia, sem exceção por tipo (RN17, ADR-0003) | Essencial onde a flag estiver ligada |
+| RF83 | Ciclo da sala: marcação de ativa pela equipe de inteligência; conclusão com número e hash do relatório e três assinaturas distintas (superior imediato no lugar do solicitante que for comandante ou subcomandante); expurgo na conclusão conforme o tipo; alerta de sala sob custódia ativa além do teto (RN18) | Essencial |
+| RF84 | Termo de ciência e aceite da revinculação gerado no app, com foto e assinatura, cifrado para a chave de quórum do termo, hash na trilha e exportação ao sistema corporativo (sem a foto até D-R30) (RN19, doc 07 seção 7.4) | Proposto |
+| RF85 | Painel web com indicadores nível 1a, de lista fechada: agregados dos metadados que o servidor já tem, sem nome, sala ou operação identificável, contagens arredondadas ou em faixas, sem filtro abaixo do limite, datas por semana ou mês. **Sem nível 1b no painel** (GD-15; ADR-0008) | Depois da v1 |
+| RF86 | Sala de análise com escopo de operações, prazo e revisão definidos pela chefia; nó de IA só cruza salas do escopo de que é membro **e com concessão vigente** (RF92), com filtro antes da busca (ADR-0008) | Depois da v1 |
+| RF87 | Resposta da IA de análise em **saída estruturada** validada no código, com referência à origem e sem trecho de conversa, rotulada "indício para análise humana"; toda pergunta registrada e cifrada para a chave de quórum de registros; limite de perguntas (ADR-0008; 01e-E11) | Depois da v1 |
+| RF88 | Posição de agentes em missão só pelo MLS na sala da missão; painel e servidor não veem posição (ADR-0008) | Fase 8 |
+| RF89 | Autorização por papel e atributos (sala, grau, compartimento, prazo, instituição) num ponto só, com negação por padrão (ADR-0009) | Essencial (Fase 1) |
+| RF90 | Atribuição de papel por duas pessoas, com prazo, motivo e recusa de combinações proibidas (ADR-0009) | Essencial (Fase 1) |
+| RF91 | Revogar aparelho não destrói: em toda revogação o segredo de lease vigente é selado para a chave de quórum do segredo de lease, com prazo da apuração (D-R35); destruí-lo exige duas autorizações e registro; painel nunca diz "destruído" enquanto ele existir (GD-13; ADR-0006 item 8) | Essencial (Fase 2) |
+| RF92 | Concessão de escopo pela sala de origem (GD-15): mensagem de controle assinada pelo administrador (comandante, em missão), com CI e/ou autorização do comandante, visível aos membros, registrada e retirável; regra de tipo (sala de análise sob custódia só com salas sob custódia); expurgo em cascata (ADR-0008) | Depois da v1 |
+| RF93 | Investigação sigilosa (ADR-0010): pedido com CI validada e segunda autorização independente, assinado na estação isolada; toda sessão com quórum presencial de detentores não impedidos (GD-21); no máximo duas renovações (GD-22); impedimento conferido pela estação; registro selado para a chave de quórum de registros, com só o hash na trilha; preservação das cópias de custódia e dos registros selados do escopo; sem membro oculto e sem uso do nó de IA | Proposto (Fase 4) |
+| RF94 | Relatório de rastro de suspeita (ADR-0010): análise só na estação isolada; saída estruturada sem trecho de conversa, com grau de confiança; conteúdo só com ordem judicial; revisão e assinatura de duas pessoas não impedidas; pacote de evidência (RF67); nenhuma medida automática | Proposto (rito na Fase 4; análise automatizada depois da Fase 6) |
 
 ---
 
@@ -196,7 +220,7 @@ Antes de iniciar a Fase 1, vale registrar uma comparação com adaptar uma base 
 | RNF-A1 | Cifra ponta a ponta de grupo com MLS (RFC 9420), implementação auditada, executada em código nativo |
 | RNF-A2 | Cifra simétrica AES-256-GCM (ou ChaCha20-Poly1305); assinaturas Ed25519; troca de chaves X25519 |
 | RNF-A3 | Chaves privadas de identidade geradas e mantidas em hardware seguro (StrongBox/TEE), não exportáveis |
-| RNF-A4 | Sigilo futuro e recuperação pós-comprometimento garantidos pelo protocolo |
+| RNF-A4 | Sigilo futuro e recuperação pós-comprometimento garantidos pelo protocolo **para os membros**. Exceção declarada: em sala sob custódia, a cópia para a chave de quórum não tem sigilo futuro; comprometer o HSM offline ou o quórum expõe os períodos guardados (ADR-0003; risco admitido só nessas salas pelo GD-1; aceite formal do R68 pendente) |
 | RNF-A5 | Anexos cifrados no aparelho com chave própria por arquivo antes do envio |
 
 ### B. Transporte e servidor
@@ -397,6 +421,8 @@ flowchart LR
   H --> O([Operação expurgada])
 ```
 
+Em **sala sob custódia**, o mesmo fluxo vale para a cópia de trabalho. A cópia de custódia não é tocada: fica no serviço `custody` até o fim do prazo de guarda e é eliminada em cerimônia, com recibo (ADR-0003 seção 7). O mesmo fluxo é disparado pela conclusão (RN18).
+
 ---
 
 ## 9. Governança e conformidade
@@ -405,7 +431,7 @@ Este item precisa de validação do jurídico da instituição; o texto abaixo �
 
 - **Base normativa do uso.** Definir o ato interno que autoriza a ferramenta, quem pode ser administrador de operação e quem responde pelo expurgo.
 - **LGPD.** O tratamento para segurança pública e investigação tem regime próprio (art. 4º, III), mas os princípios gerais e o devido processo continuam aplicáveis. Registrar finalidade, retenção e responsáveis.
-- **Cadeia de custódia.** O sistema é canal de coordenação, não repositório de prova. Informação que precise integrar procedimento formal deve ser levada ao sistema oficial pelo fluxo de exportação autorizada. Isso deve constar na norma de uso.
+- **Cadeia de custódia.** O sistema é canal de coordenação, não repositório de prova. Informação que precise integrar procedimento formal deve ser levada ao sistema oficial pelo fluxo de exportação autorizada. Isso deve constar na norma de uso. Em sala sob custódia, a cópia institucional existe para atender ordem judicial, ou processo administrativo com validação jurídica, sempre com CI, por quórum presencial (RN20); não substitui a exportação para o sistema oficial.
 - **Controle.** A trilha de metadados existe para que corregedoria e controle externo possam verificar *que* houve uma operação, quem participou e quem a encerrou, sem acesso ao conteúdo.
 - **Uso da IA.** Relatórios são apoio à decisão. Não substituem análise humana e não devem ser citados como fonte em documento oficial.
 - **Transparência interna.** Todo membro é informado, no convite, de que há nó de IA na sala e de que o administrador pode pedir análise do conteúdo.
@@ -437,3 +463,8 @@ Este item precisa de validação do jurídico da instituição; o texto abaixo �
 8. Como entregar o aviso de nova mensagem sem serviço de terceiro (decisão D-R1, doc 04).
 9. Rito de quebra de pseudonimato e variação de conteúdo por destinatário (D-R2 e D-R3, docs 04 e 05).
 10. Enquadramento LGPD, base legal, retenção da trilha e compatibilidade do expurgo com dever de guarda (D-R4 e D-R5, doc 06).
+11. ~~Exceções à custódia com a flag ligada (D-R29)~~: decidido no GD-14 (RN17); resta quem dá a segunda assinatura (D-R36). Foto do termo de revinculação (D-R30), doc 07 seção 13.
+12. ~~Quem assina a conclusão quando o solicitante é o próprio comandante ou subcomandante~~: o superior imediato do solicitante (RN18). Resta quem autoriza trocar o titular de um papel (pergunta 3 do 01c).
+13. Investigação sigilosa (ADR-0010): segunda autorização e substitutos (D-R37); prazo, contraditório e aviso no arquivamento (D-R38).
+14. Escada por perfil e reconhecimento facial (GD-18): números e perfil missão na polícia (D-R40); parecer jurídico sobre biometria.
+15. Concessão de escopo de análise (GD-15): base mínima, retroação, agregados (D-R41).

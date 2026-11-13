@@ -13,7 +13,7 @@
 | Pergunta | Resposta |
 |---|---|
 | Está pronto para o Exército? | **Não.** Nada implementado; sem algoritmo de Estado (D-R18), sem homologação, sem credenciamento; normas militares não analisadas |
-| É ponta a ponta? | No uso normal, **sim por desenho**: o servidor só vê cifrado. Com duas ressalvas declaradas: o **nó de IA** é uma ponta (membro declarado) e a **custódia** (ADR-0003) permite à instituição decifrar com quórum. Nome correto: **ponta a ponta com custódia institucional sob quórum** |
+| É ponta a ponta? | No uso normal, **sim por desenho**: o servidor só vê cifrado. Com duas ressalvas declaradas: o **nó de IA** é uma ponta (membro declarado), e a **custódia** (ADR-0003) existe só em **sala sob custódia**. No perfil Exército a flag vem **ativa**, com o motivo investigação militar; a instituição decifra só por quórum presencial em HSM offline, com base registrada. Nome correto: **ponta a ponta, com custódia institucional sob quórum nas salas marcadas** |
 | Tenant ou local? | **Instância dedicada, hospedada na infraestrutura da própria Força.** Nunca tenant em ambiente compartilhado (seção 2) |
 
 ---
@@ -57,7 +57,7 @@
 | LGPD | Art. 4º, III, segurança pública | Art. 4º, III, **defesa nacional e segurança do Estado** |
 | Disciplina | Corregedoria, procedimento administrativo | Regulamento Disciplinar do Exército e sindicância militar |
 | Crimes por vazamento | Código Penal, arts. 325 e 314 | **Código Penal Militar** (Decreto-Lei 1.001/1969), crimes de revelação de segredo e violação de sigilo (artigos a conferir) |
-| Ordem judicial e custódia | Justiça comum | **Justiça Militar da União** quando couber; rito da ADR-0003 vale igual |
+| Ordem judicial e custódia | Justiça comum. Custódia **desligada por padrão**; pode ligar com motivo corregedoria ou inquérito, quando o edital exigir (GD-2) | **Justiça Militar da União** quando couber. Custódia **ativa**, motivo investigação militar. Rito da ADR-0003 igual: quórum presencial, CI e base (ordem judicial, cumprida; ou processo administrativo com validação jurídica). Com a flag ativa, custódia é o padrão; sala comum só com motivo e segunda assinatura (GD-14) |
 | Termo de ciência | Assinatura via gov.br, contingência em três vias | Rito militar: ciência registrada em sistema da Força ou assinatura ICP-Brasil; gov.br só se a Força adotar (D-R23) |
 | Quórum de custódia | Comandantes da companhia | Cadeia de comando da OM ou da área de inteligência (definir quem são os N detentores) |
 
@@ -73,7 +73,7 @@ O desenho atual exige conexão periódica: o lease de 12 h protege o aparelho pe
 | **B. Nó tático de campo** | Servidor portátil (kit de campo) atua como serviço de entrega local para os grupos da missão, numa rede local (Wi-Fi ou rádio IP); sincroniza com a instância central ao voltar | Novo componente a endurecer; ordenação MLS entre nó de campo e central precisa de desenho |
 | **C. Sem operação offline na v1** | Campo usa os meios táticos já existentes da Força; MIGDOL só com conexão | Limita o uso |
 
-**Decidido (D-R22): opção B, operação em campo por rádio, para a polícia e para o Exército**, como **Fase 8** depois da v1 (na v1 vale a C). Desenho em **docs/10-operacao-em-campo-por-radio.md** e **docs/adr/0004** (proposta). HF fica fora do escopo do aplicativo.
+**Decidido (D-R22): opção B, operação em campo por rádio, para a polícia e para o Exército**, como **Fase 8** depois da v1 (na v1 vale a C). Desenho em **docs/10-operacao-em-campo-por-radio.md** e **docs/adr/0004** (proposta revisada). HF fica fora do escopo do aplicativo. Na missão, a central fica congelada; o nó só ordena; o administrador da missão é o **comandante da missão**, e o substituto, o **subcomandante** (GD-11).
 
 ---
 
@@ -86,7 +86,8 @@ Para a inteligência militar, o adversário de referência é **serviço de inte
 - aparelho e sistema escolhidos e avaliados (D-R19); compra com cadeia de custódia;
 - build reproduzível; auditoria externa e red team com cenário de adversário estatal;
 - credenciamento de todo o pessoal com acesso (usuários, administradores, desenvolvedores);
-- segurança física e de emissões nas salas de servidores e HSM.
+- segurança física e de emissões nas salas de servidores e HSM;
+- em missão de campo, escada de resposta no **perfil missão**, com destruição do aparelho diante de rosto de outra pessoa (duas capturas) com PIN errado ou de PIN de coação, cada gatilho ligado só depois das medições da GD-24, e destruição imediata do nó de campo capturado (GD-18; doc 07 seção 7.1a; ADR-0004 item 13).
 
 ---
 

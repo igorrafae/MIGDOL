@@ -13,7 +13,7 @@
 | Item | Estado |
 |---|---|
 | Código | Esqueleto (serviços Go com negação por padrão); sem criptografia implementada, sem teste real |
-| Decisões | D-R1 a D-R16 em aberto; ADR-0002 (atestação) e ADR-0003 (custódia) não escritas |
+| Decisões | D-R1 a D-R41 com parte em aberto. ADR-0003 (custódia) e ADR-0004 (campo) revisadas na etapa 1b da Fase 0 e nas rodadas seguintes; ADR-0005 (commits) e ADR-0006 (lease) propostas; ADR-0007 (plataformas) **aceita** (GD-19); ADR-0008 (painel e IA de análise, redesenhada pela GD-15), ADR-0009 (RBAC + ABAC) e ADR-0010 (investigação sigilosa) propostas; ADR-0002 (atestação) proposta no doc 07 seção 8, arquivo como entrada do spike de atestação. D-R17 e D-R18 ficam para o portão G3 (GD-9) |
 | Jurídico | Cerca de 28 pontos marcados "validar" ou "conferir" |
 | Avaliação externa | Nenhuma; pentest previsto em três rodadas (doc 03) |
 
@@ -29,6 +29,7 @@ Texto lido no [Planalto](https://www.planalto.gov.br/ccivil_03/_ato2011-2014/201
 - Os graus legais são **reservado, secreto e ultrassecreto** (Lei 12.527/2011). "Restrito" não é grau legal; foi corrigido no doc 04 seção 6.1.
 - **Decisão D-R17: grau máximo que o MIGDOL trata.** Proposta: **reservado e secreto**. Ultrassecreto, pelo que se conhece de outros países, não trafega em celular comercial com aplicativo; exige equipamento homologado e ambiente controlado **[conferir]**.
 - Cada sala tem grau definido na criação; relatório de IA herda o grau mais alto das salas analisadas (já no doc 04).
+- **Decisão do responsável (GD-9):** D-R17 e D-R18 ficam para **depois dos spikes**, no portão G3. **Até lá, nenhum grau classificado é tratado.**
 
 ### 2.2 Exigências do decreto e lacunas
 
@@ -50,6 +51,7 @@ Texto lido no [Planalto](https://www.planalto.gov.br/ccivil_03/_ato2011-2014/201
 - **Leitura proposta:** o expurgo destrói **conteúdo**; o **registro de acesso** (quem acessou qual sala e quando, sem conteúdo) é guardado pelo prazo do grau. Isso também ajuda no conflito com a Lei 8.159 (R60, D-R5).
 - O registro de acesso é dado pessoal do agente: cifrado, com acesso por rito (regra 13).
 - **[conferir]** com o jurídico.
+- **Revisão de desenho (D28), adiado para antes da Fase 4, junto com D-R4 e D-R5:** a ADR-0003 já separa uma chave de quórum por classe de dado, o que permite prazos diferentes. Faltam: hierarquia de chaves por grau (a cópia de 5 anos e o registro de 15 anos não podem usar a mesma chave); registro de acesso gerado no servidor, cifrado para quórum, incluindo **negações**; identificador de sala retido para o registro; `audit_log.actor` sem identificador em claro. Sem grau classificado até G3, o conflito com 15 e 25 anos não se aplica ainda.
 
 ---
 
@@ -67,7 +69,7 @@ Texto lido no [Planalto](https://www.planalto.gov.br/ccivil_03/_ato2011-2014/201
 
 ### 4.1 Criptografia
 - **Duas camadas independentes:** implementações, chaves e fornecedores diferentes, de modo que a falha de uma não exponha o conteúdo. Uma camada é MLS; a outra, o algoritmo de Estado.
-- **Pós-quântico (D-R12):** segredos de 15 a 25 anos estão expostos ao risco de "colher agora, decifrar depois". Adotar troca de chaves híbrida (clássica + pós-quântica) assim que houver suíte madura na biblioteca MLS **[verificar suporte]**.
+- **Pós-quântico (D-R12):** segredos de 15 a 25 anos estão expostos ao risco de "colher agora, decifrar depois". Adotar troca de chaves híbrida (clássica + pós-quântica) assim que houver suíte madura na biblioteca MLS **[verificar suporte]**. Vale também para a **cópia de custódia** (HPKE com KEM híbrido), que guarda até 5 anos (D08; ADR-0003). A segunda camada de Estado, quando houver, também cobre a custódia.
 - **Módulos criptográficos validados ou homologados:** registrar quais bibliotecas, versões e validações; regra 1 continua (nada à mão).
 
 ### 4.2 Rede e metadados
@@ -113,6 +115,16 @@ Texto lido no [Planalto](https://www.planalto.gov.br/ccivil_03/_ato2011-2014/201
 - O diretório (server/services/directory) passa a guardar o **grau da credencial** do usuário e o **grau da sala**; a autorização por sala (regra 5) verifica os dois.
 - Credencial vencida ou cassada suspende o acesso às salas daquele grau.
 
+### 5.1 Compartimento de análise (ADR-0008 e ADR-0009, propostas; depois da v1)
+- **Compartimento** aqui é um conjunto de salas com necessidade de saber própria, atributo do controle de acesso (ADR-0009). Não confundir com o **perfil de local** "compartimento" do doc 07 seção 4.3.
+- A **sala de análise** é um compartimento: escopo (lista de operações), prazo e revisão definidos pela chefia (D-R32).
+- **Concessão da sala de origem (GD-15):** uma sala só entra no escopo se o administrador dela conceder, por mensagem de controle assinada no próprio grupo, com CI e/ou autorização do comandante, visível aos membros e registrada. Sem concessão, a sala fica fora; a instituição só chega ao conteúdo pelo rito da regra 14. Sala de análise sob custódia só inclui salas sob custódia (ADR-0008 seção 2).
+- **Credencial em todo o escopo:** só entra quem tem credencial ≥ ao maior grau das salas do escopo **e** necessidade de saber registrada para cada uma. O escopo não pode crescer sem nova autorização registrada. Credencial, papel de analista e concessão são conferidos pelos clientes e pelo nó de IA contra a lista assinada de papéis e o estado autenticado do grupo, não contra o diretório, que é hostil (ADR-0009 seção 3; 01e-E10b).
+- O relatório e os indícios herdam o **maior grau** das salas do escopo (doc 04 seção 6.1). Até o portão G3, nenhuma sala de análise trata grau classificado (GD-9).
+- O nó de IA só cruza salas do escopo de que é membro e com concessão vigente, com filtro antes da busca; o expurgo da origem apaga os indícios dela na sala de análise (ADR-0008 seção 2). Pergunta aberta: IA em sala secreta ou de compartimento (pergunta 15 da revisão).
+- Toda pergunta à IA gera registro de acesso cifrado para a chave de quórum de registros (seção 2.3).
+- Os membros das salas do escopo veem a concessão na própria sala e sabem o que a sala de análise devolve (doc 06 seção 7).
+
 ---
 
 ## 6. Riscos novos (continuação da matriz)
@@ -153,13 +165,16 @@ Texto lido no [Planalto](https://www.planalto.gov.br/ccivil_03/_ato2011-2014/201
 
 ---
 
-## 9. Ordem sugerida
+## 9. Ordem decidida (GD-9)
 
-1. **D-R17:** definir o grau máximo e enquadrar no Decreto 7.845 ou na norma do ente.
-2. **D-R18:** procurar GSI ou CEPESC sobre algoritmo de Estado e homologação.
-3. Resolver o conflito do registro de acessos com o expurgo, junto com D-R4, D-R5 e R60.
+A ordem anterior punha D-R17 e D-R18 antes dos spikes; o pipeline da Fase 0 os punha no portão G3 (D33). O responsável decidiu:
+
+1. Spikes da Fase 0 (MLS, atestação, inferência; doc 03 seção 5).
+2. **Portão G3:** D-R17 (grau máximo e enquadramento no Decreto 7.845 ou na norma do ente) e D-R18 (algoritmo de Estado com GSI ou CEPESC, e homologação).
+3. Resolver o conflito do registro de acessos com o expurgo, junto com D-R4, D-R5 e R60 (D28), antes da Fase 4.
 4. Documentar e testar a proteção de metadados e a rede celular.
-5. Só então iniciar os spikes da Fase 0 (doc 03 seção 5).
+
+**Até o portão G3, nenhum grau classificado é tratado** pelo MIGDOL.
 
 ## 10. Pontos para validação
 

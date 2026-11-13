@@ -18,6 +18,7 @@
 | Chaves de administrador | Permitem expurgo e autorização de exportação |
 | Relatórios de IA | Concentram o conteúdo mais sensível em poucas páginas |
 | Trilha de auditoria | Base do controle institucional |
+| Acervo de custódia e chaves de quórum (HSM offline, cartões) | Abrem as salas sob custódia e os registros cifrados para quórum por até 5 anos (ADR-0003) |
 
 ### 1.2 Adversários
 
@@ -30,6 +31,8 @@
 | **Administrador de infraestrutura curioso** | Acesso a servidores, backups e logs | Sim |
 | **Malware no aparelho** | App malicioso, serviço de acessibilidade, acesso remoto | Sim, com limites |
 | **Nó de IA comprometido** | Leitura do conteúdo das salas em que participa | Mitigado, não eliminado |
+| **Detentores de cartão em conluio ou coagidos** | 3 cartões e acesso ao HSM offline e à estação isolada | Sim; residual (R79, R80) |
+| **Nó de campo capturado ligado** | Ordena e entrega na missão; sem chave de grupo nem de membros | Sim (ADR-0004, R89) |
 | **Comprometimento de sistema operacional ou hardware** | Exploração de kernel, spyware de nível estatal | **Fora do escopo** — nenhuma aplicação resiste |
 | **Coação do usuário** | Obriga a desbloquear e mostrar | Fora do escopo técnico; tratado por procedimento |
 
@@ -40,6 +43,7 @@
 3. O nó de IA vê texto em claro das salas em que está. Se ele for comprometido, essas salas estão expostas.
 4. O servidor conhece metadados: quais aparelhos estão em quais salas, horários e volume.
 5. Detecção de root e de instrumentação é uma corrida; um atacante dedicado com o aparelho na mão eventualmente contorna. A atestação por hardware e o MDM elevam esse custo.
+6. Em sala sob custódia, comprometer o HSM offline ou o quórum expõe os períodos guardados por até 5 anos (risco admitido só nessas salas no GD-1; com a flag ligada a custódia é o padrão, GD-14; aceite formal do R68 pendente). A estação isolada tem texto em claro durante a cerimônia de abertura (ADR-0003 seção 6) e durante a análise da investigação sigilosa (ADR-0010 seção 6).
 
 ---
 
@@ -59,7 +63,7 @@ Probabilidade (P) e impacto (I): Baixo / Médio / Alto / Crítico. A coluna "Res
 | R08 | Extração forense do armazenamento do aparelho | Baixo | Alto | SQLCipher com chave dividida; nada fora do app; sem backup | Baixo |
 | R09 | Interceptação de tráfego | Médio | Alto | TLS 1.3 mútuo, pinning, cifra ponta a ponta por baixo | Baixo |
 | R10 | Servidor de mensagens comprometido lê conteúdo | Baixo | Crítico | Ponta a ponta; servidor sem chaves | Baixo |
-| R11 | Servidor comprometido insere membro falso na sala | Baixo | Crítico | Clientes só aceitam inclusão assinada por administrador; código de segurança | Baixo |
+| R11 | Servidor comprometido insere membro falso na sala | Baixo | Crítico | Clientes só aceitam inclusão assinada por administrador registrado no estado do grupo; um commit por época; hash do transcript nos dados autenticados de toda mensagem, comparado sem decifrar (ADR-0005 item 2); código de segurança por sala e época. O commit retido (remoção que não chega a parte do grupo) não insere membro e está no R98, em Médio (01e-E03) | Baixo |
 | R12 | Ordem de expurgo forjada ou repetida | Baixo | Alto | Assinatura verificada no aparelho; contador por sala | Baixo |
 | R13 | Expurgo não alcança aparelho offline | Alto | Alto | Lease; expurgo ao reconectar | Baixo |
 | R14 | Dados residuais em servidor após expurgo | Médio | Alto | Destruição de chave; banco da IA fora de backup | Baixo |
@@ -243,6 +247,8 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 - [ ] Chave de administrador condicionada a biometria
 - [ ] Vetores de teste de interoperabilidade aprovados
 - [ ] Formato da ordem de expurgo documentado e testado com casos inválidos
+- [ ] Um commit por época e detecção de bifurcação sem decifrar, nos dois casos do spike (ADR-0005); lease criptográfico e revogação sem destruição (ADR-0006, A73, A74)
+- [ ] Cópia de custódia por HPKE para chave pública, verificada pelo hash na mensagem (ADR-0003; A65–A68), onde a flag estiver ligada
 - [ ] Cenários D01–D06 aprovados
 
 ### 4.5 Backend
@@ -290,11 +296,13 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 
 - [ ] Registro de riscos criado, com donos, prazos e aceites (doc 04)
 - [ ] Decisões D-R1 a D-R5 tomadas e registradas
-- [ ] Plano de resposta a incidentes e playbooks P1–P10 aprovados; contatos e acesso de emergência testados
+- [ ] Plano de resposta a incidentes e playbooks P1–P11 e P1-S (investigação sigilosa, ADR-0010) aprovados; contatos e acesso de emergência testados
 - [ ] Comandante de incidente designado, com substituto
 - [ ] Monitoramento de eventos de segurança funcionando, sem conteúdo (doc 05 seção 4)
-- [ ] Rito de quebra de pseudonimato aprovado e testado (quórum de 3 comandantes, ADR-0003)
-- [ ] Cerimônia do HSM de custódia realizada (M de N, M ≥ 3), cartões distribuídos e teste de abertura com escopo (ADR-0003); HSM de recuperação com operação única e aprovação remota testada (A60–A64)
+- [ ] Rito de quebra de pseudonimato aprovado e testado (quórum presencial de 3 comandantes em HSM offline, ADR-0003)
+- [ ] Cerimônia do HSM offline realizada (M de N, M ≥ 3): lote de chaves públicas assinado, cartões distribuídos, inventário de backups do HSM, teste de abertura com escopo e de eliminação com recibo (ADR-0003; A54, A65–A68); estação isolada conforme ADR-0003 seção 6
+- [ ] Revinculação com aprovação dupla e termo testada (A58–A60, A70, A71); sem HSM online nem aprovação remota na v1
+- [ ] Investigação sigilosa (ADR-0010) ensaiada em teste de mesa: impedimento conferido pela estação, registro selado com só o hash na trilha, preservação, nenhuma mudança observável nas salas (A84–A95); D-R37 e D-R38 decididas
 - [ ] Procedimento de apuração de vazamento aprovado pela corregedoria, com graus de confiança
 - [ ] Teste cego de atribuição realizado e taxas registradas (F01–F03)
 - [ ] Exercício de mesa de incidente realizado
@@ -316,8 +324,9 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 - [ ] Modo de coação aprovado, treinado e com destinatário do alerta definido
 - [ ] Decisões D-R6 a D-R13 do documento 07 tomadas
 - [ ] Decisão D-R14 (expurgo remoto após apreensão por autoridade), rito de requisição externa (doc 06 seção 6.3) e pacote de evidência assinado (RF67) definidos
-- [ ] Escada de resposta do aparelho (doc 07 seção 7.1) aprovada; decisão D-R15 (arquivo custodiado por ordem judicial) tomada e, se adotada, ADR-0003 escrita
-- [ ] Grau máximo (D-R17) definido e sistema enquadrado no Decreto 7.845/2012 ou na norma do ente; algoritmo de Estado (D-R18) contratado antes de tratar informação classificada (doc 08)
+- [ ] Verificação facial de quem acessa e escada por perfil (doc 07 seções 7.1a e 7.2; GD-18) com parecer jurídico, taxas de A76 e A78 medidas e D-R40 decidida
+- [ ] Escada de resposta do aparelho (doc 07 seção 7.1) aprovada; decisão D-R15 com parecer do jurídico sobre o processo administrativo (registrado por CI) como base e a eliminação; ADR-0003 revisada aceita; flag de custódia do `instituicao.yaml` conferida; D-R29 decidida (GD-14); D-R30, D-R35 e D-R36 decididas
+- [ ] Grau máximo (D-R17) definido e sistema enquadrado no Decreto 7.845/2012 ou na norma do ente; algoritmo de Estado (D-R18) contratado antes de tratar informação classificada (doc 08). D-R17 e D-R18 ficam para o portão G3, depois dos spikes; **nenhum grau classificado até lá** (GD-9)
 - [ ] Instância dedicada da instituição instalada pela própria equipe a partir de binário reproduzível; fornecedor sem acesso à produção (doc 09)
 - [ ] Instalação e atualização feitas pelo pacote offline assinado (doc 02 seção 10.1): verificador recusa pacote alterado; nenhum segredo no pacote; retorno à versão anterior testado
 
@@ -326,6 +335,33 @@ Cada item precisa de evidência (relatório, captura do teste, configuração ex
 Ver checklist completo no documento 06, seção 13. Todos os itens são condição para o parecer de homologação.
 
 ---
+
+### 4.12 Critérios de entrada do piloto e da produção
+
+Validações além de "arquitetura provada, decisões tomadas, parecer jurídico e fluxo real sob teste". **V01 a V10 são critério de entrada do piloto (Fase 7); V11 a V16, da produção.** Os protocolos podem ser escritos antes do G0; a execução depende de aparelhos e do ambiente de homologação. Só dados fictícios.
+
+| ID | Validação | Por que | Como validar (teste ou evidência) | Entrada de |
+|---|---|---|---|---|
+| V01 | Avaliação independente | Quem desenhou não pode ser o único a validar | Revisão externa curta do core e do protocolo; pentest do servidor e do app (seção 3) | Piloto |
+| V02 | Expurgo comprovado de forma forense | Promessa central: ninguém recupera | Aparelho de teste após expurgo e após lease vencido examinado com ferramenta forense; nenhum conteúdo recuperado; laudo anexado | Piloto |
+| V03 | Ensaio da cerimônia de quórum | Erro na cerimônia real perde chaves ou expõe dados | Ensaio com HSM e cartões de teste: gerar lote, abrir com quórum, recusar sem quórum, perda de um cartão, substituição de detentor; ata | Piloto |
+| V04 | Exercício de incidente | Playbooks do doc 05 nunca testados | Exercício de mesa: aparelho perdido, coação, apreensão por autoridade, nó de campo capturado, pergunta maliciosa à IA; relatório com falhas e correções | Piloto |
+| V05 | Backup e restauração | RPO de 15 min do diretório e RPO 0 proposto para os segredos de lease (ADR-0006 item 10) | Derrubar o banco de homologação e restaurar dentro do RPO/RTO; caches continuam legíveis | Piloto |
+| V06 | Atualização e reversão | Pacote offline nunca instalado nem revertido (ADR-15) | Instalar, atualizar e reverter em ambiente isolado; recusa de pacote com assinatura ou manifesto inválido | Piloto |
+| V07 | Cadeia de suprimentos | Adversário estatal ataca dependências | SBOM; hashes fixados (regra 8); build reproduzível conferido por segunda máquina; release assinado | Piloto |
+| V08 | Desempenho e bateria | App que gasta bateria é desligado em campo | Medir bateria com conexão própria (D-R1), latência, grupo grande, anexo grande; metas registradas | Piloto |
+| V09 | Usabilidade com agentes | Rito complexo empurra o agente para mensageiro comercial (R120) | Teste com 5 a 8 agentes, dados fictícios: tempo de tarefa, erros, pânico, PIN de coação, revinculação; ajustes registrados. Protocolo, protótipo e critérios no doc 11 (seção 6) | Piloto |
+| V10 | Plano do piloto | Sem critério o piloto não termina nem aprova | Escopo (unidade, número de agentes, prazo), métricas de sucesso, critério de interrupção e de saída, aprovados pela chefia | Piloto |
+| V11 | Homologação oficial | Órgão que homologa sistema e recurso criptográfico [conferir] (doc 09 seção 9) | Parecer do órgão competente | Produção |
+| V12 | Red team com adversário estatal | Obrigatório no perfil Exército (doc 09 seção 5) | Exercício com equipe externa credenciada; achados altos fechados | Produção |
+| V13 | Versões convivendo | Aparelhos em versões diferentes não podem perder sala | Teste de migração de esquema e protocolo com versões N e N-1 | Produção |
+| V14 | Sustentação | Protocolo próprio exige equipe por anos | Equipe nomeada; responsável pela pilha criptográfica; prazo para corrigir vulnerabilidade; plano de troca da biblioteca MLS (mls-rs como reserva) | Produção |
+| V15 | Treinamento e manual | Ritos de coação e perda só funcionam se treinados | Manuais do agente, do gestor e do comandante; treino registrado | Produção |
+| V16 | Custo total e licenças | Sustentação e edital | Custo anual de HSM, GPU, aparelhos e equipe; licenças conferidas pelo SBOM | Produção |
+
+Prioridade dos protocolos: V09, V03 e V02.
+
+**Portão da custódia em produção (D08; 01c, seção 3):** nenhuma sala sob custódia entra em produção antes de KEM híbrido na cópia de custódia, **ou** de aceite formal do R78 para a custódia pelo responsável pela homologação e pelo comitê (pergunta 13 do 01c). Vale junto com V11.
 
 ## 5. Roteiro de entrega
 
@@ -337,8 +373,9 @@ Cada fase termina com algo demonstrável e com critérios de aceite verificávei
 
 | Entrega | Critério de aceite |
 |---|---|
-| Spike MLS: núcleo Rust + ponte Kotlin + chamada a partir do React | Dois aparelhos e um cliente de linha de comando trocam mensagens num grupo; inclusão e remoção funcionam |
-| Spike de atestação | Servidor valida a cadeia de um aparelho real e recusa emulador e aparelho com root |
+| Spike MLS: núcleo Rust + cliente de linha de comando (CLI); ponte Kotlin só para o caminho do Keystore, em emulador. Sem React (ADR-0007 aceita; 01e-E19b) | No mínimo **quatro clientes** da CLI (dois administradores e dois membros) trocam mensagens num grupo; inclusão e remoção funcionam (o mesmo texto vale no `PIPELINE.md`, 01e-E04c). Critério ampliado pela revisão (D33) e pelas rodadas da 1b: (1) cópia de custódia por HPKE para chave pública, com `info` ligando sala, período (só por tempo, hipótese do spike) e classe, na **suíte candidata DHKEM(P-256, HKDF-SHA256), HKDF-SHA256, AES-256-GCM** (GD-20; confirmar com o HSM, 01c-C05, C11); (2) assinatura do remetente por dentro da cópia, pela função da biblioteca com rótulo próprio (01c-C08); (3) um commit por época; (4) **bifurcação induzida pelo servidor** (dois commits na mesma época entregues a metades do grupo) detectada nos dois lados pelos sinais da ADR-0005 item 2 (hash do transcript nos dados autenticados em claro; mensagem da mesma época que não decifra; commit divergente); classificada como **bifurcação provada** (SEV1) só quando o cliente verifica a assinatura de administrador registrado no commit conflitante, ou pela importação de cadeia; pacotes que não decifram ou trazem hash diferente, forjados pelo servidor ou por um **membro**, em qualquer quantidade, ficam como **anomalia não autenticada** (alerta "servidor ou membro anômalo", sem recomendar recriar a sala, nunca SEV1), e valor falso nos dados autenticados nunca esconde bifurcação; verificar se a biblioteca deixa processar e verificar commit de época já aplicada **[verificar no spike]** (01g-G13); (4a) **matriz de falso positivo**: duplicata, fora de ordem, época anterior atrasada, byte corrompido e retransmissão não viram SEV1; membro que mente no campo é classificado como remetente inconsistente (ADR-0005 item 2c; 01e-E02); (4b) **commit retido** para parte do grupo detectado pelos sinais 4 e 5, e custo da confirmação de época medido (01e-E03; pergunta Q4); (5) **partição total** não detectada em banda e detectada na reunificação (limite declarado); (6) remoção de aparelho offline; (7a) caminho da chamada ao Keystore a partir do core, **em emulador**, com a saída num buffer direto alocado pelo core, fora do heap da JVM **[verificar]**, e zerada no quadro da chamada (regra 2, GD-12; 01e-E15); o hardware real fica para a etapa 5, depois de G1 (01e-E04a); (8) verificar o que a biblioteca oferece para propostas de atualização e de autoexclusão por membro (01c-C16, decisão pendente); (9) **API da biblioteca**: gravar e ler `authenticated_data` por mensagem antes de processar; ler o hash do transcript confirmado; `epoch_authenticator` para o código de segurança (RF04) (01e-E04d, E16); (10) o que o commit como mensagem pública exporia, se essa alternativa for considerada (ADR-0005 item 4; 01e-E09a) |
+| Spike de atestação | Servidor valida a cadeia de um aparelho real e recusa emulador e aparelho com root; (7b) desembrulho pelo Keystore em hardware real (StrongBox/TEE), chamado do core, com a saída zerada no quadro da chamada (01e-E04a) |
+| Estudo de viabilidade do iPhone (ADR-0007; etapa 5b do `PIPELINE.md`, depois de G1) | Relatório sobre APNs, App Attest, MDM da Apple, bloqueio de captura de tela, série atestada e conexão em segundo plano; protótipo do doc 11; **sem código de produto**; insumo da ADR própria (D-R31) |
 | Spike de inferência | Qwen quantizado, BGE-M3 e PaddleOCR rodando juntos no hardware disponível, com memória e tempos medidos |
 | Comparação construir × adaptar | Uma página com a decisão |
 | Repositório, integração contínua, padrões de código | Build e testes automáticos de `app`, `core`, `server`, `ai-node`; `scripts/check-boundaries.sh` na integração contínua |
@@ -354,6 +391,7 @@ Cada fase termina com algo demonstrável e com critérios de aceite verificávei
 | Cadastro por QR, certificado, painel mínimo do gestor, **Termo assinado via gov.br como condição de ativação** | Aparelho cadastrado presencialmente; aparelho sem termo válido não ativa; nova versão do termo suspende o acesso até assinar; revogação efetiva |
 | Gateway, entrega, diretório, fila com prazo | C01, C02, C04 aprovados |
 | Criar operação, convidar, remover | D01, D03 aprovados |
+| Estado autenticado do grupo (ADR-0005) desde a primeira sala: chaves de administrador, papéis e marca (tipo comum na Fase 1) na extensão do contexto; um commit por época; sinais de bifurcação; declaração de membros verificada antes de gravar (01c-C26) | Bifurcação induzida detectada; inclusão sem declaração assinada recusada pelo diretório; a Fase 4 não exige migração do contexto |
 | Tela de conversa, canais, confirmações | Operador novo envia mensagem sem instrução |
 | Cache cifrado e busca local | A14 aprovado; busca em até 200 ms |
 
@@ -363,7 +401,8 @@ Cada fase termina com algo demonstrável e com critérios de aceite verificávei
 |---|---|
 | Plugin de segurança completo | A01–A13 aprovados |
 | Marca d'água visível | F01 aprovado |
-| Lease e chave de cache dividida | A21, A22 aprovados |
+| Lease criptográfico e chave de cache dividida (ADR-0006) | A21, A22, A73 e A74 (doc 07) aprovados; queda no meio da renovação e restauração do banco sem perder caches (01c-C12); troca periódica da chave do banco medida (01c-C13). Selagem na revogação feita pelo `directory`, com a chave pública da classe lida do pacote assinado e chave de teste até a cerimônia (ADR-0006 item 11; 01e-E13 **[proposta]**) |
+| Verificação facial de quem acessa e escada por perfil (doc 07 seções 7.1a e 7.2; GD-18), depois do parecer jurídico | A76–A83 (doc 07) aprovados; taxas de falso negativo e de falsificação aceita medidas e dentro da D-R40; perfil missão completo na Fase 8 |
 | Bloqueio de cópia, notificações, backup | A18–A20 aprovados |
 | Integração com MDM | Checklist 4.2 |
 
@@ -380,11 +419,16 @@ Cada fase termina com algo demonstrável e com critérios de aceite verificávei
 
 | Entrega | Critério de aceite |
 |---|---|
+| **Entrada da fase (D28; 01c-C19):** hierarquia de chaves por grau, registro de acessos gerado no servidor e cifrado para quórum, incluindo negações, e `audit_log.actor` sem identificador em claro, decididos com D-R4 e D-R5. Dono: responsável pela homologação | Decisão registrada antes do primeiro PR da fase |
 | Ordem de expurgo assinada, verificada nos aparelhos | C06, C07 aprovados |
 | Destruição no servidor e nos aparelhos | A16 e checklist 4.7 |
 | Auditoria encadeada e perfil Auditor | C08 aprovado |
 | Retenção automática por prazo | Mensagens somem no prazo em todos os pontos |
 | Dupla custódia (se decidida) | Expurgo exige duas assinaturas |
+| Ciclo da sala (ativa; concluída com número e hash do relatório e três assinaturas) e expurgo na conclusão conforme o tipo (RN18) | A69 (doc 07) aprovado |
+| Marca de custódia (comum por exceção com motivo e duas assinaturas; sala de sistema sempre comum, GD-14), cópia HPKE e serviço `custody`, onde a flag estiver ligada (ADR-0003) | A54, A65–A68 e A75 (doc 07) aprovados; cerimônia de teste do HSM offline |
+| Revinculação com aprovação dupla, termo e histórico por outro membro (RN19) | A58–A60, A70, A71 (doc 07) aprovados |
+| Rito da investigação sigilosa (ADR-0010): pedido e segunda autorização na estação isolada, quórum de detentores não impedidos em toda sessão (GD-21), impedimento, registro selado, preservação com lista de bloqueio, nível 1 (metadados e registros de atribuição, com CI validada); correlação de metadados na estação; parecer jurídico sobre metadados de agentes sem ordem judicial (01g-G09f) | A84–A90, A92, A94 e A95 (doc 07) aprovados; teste de mesa do P1-S (doc 05) |
 
 ### Fase 5 — Nó de IA: OCR, busca e correção
 
@@ -417,73 +461,28 @@ Cada fase termina com algo demonstrável e com critérios de aceite verificávei
 | Exercício de mesa de incidente e simulação de vazamento com teste cego | Relatórios anexados; taxas de atribuição registradas |
 | Teste de restauração e de revogação remota | Aprovados |
 | RIPD aprovado e parecer jurídico sobre LGPD e dever de guarda | Anexados |
+| Critérios V01–V10 (seção 4.12) | Evidências anexadas |
 | Parecer de homologação | Emitido pela área de segurança |
 
 ### Fase 8 — Operação em campo por rádio (depois da v1)
 
-Polícia e Exército (D-R22). Entregas e critérios no doc 10 seção 12; exige ADR-0004 aprovada e levantamento dos rádios (D-R25).
+Polícia e Exército (D-R22). Entregas e critérios no doc 10 seção 12; exige ADR-0004, ADR-0005 e ADR-0006 aprovadas e levantamento dos rádios (D-R25).
 
 ### Depois da v1
 
-- Cliente iOS, com limitações documentadas.
+- Cliente iOS, só após estudo de viabilidade e ADR própria sobre APNs, App Attest e MDM da Apple (ADR-0007, D-R31).
+- Painel com indicadores e IA de análise entre operações (ADR-0008, proposta), depois da Fase 6 e do spike de inferência; painel só com o nível 1a (GD-15); nível 2 só por MLS e por concessão da sala de origem (A96–A99).
+- Análise automatizada da investigação sigilosa na estação isolada, com modelo local (ADR-0010; A91, A93), depois da Fase 6 e do spike de inferência.
 - Autocompletar com modelo no aparelho.
 - Canais com membros distintos dentro da mesma operação.
 - Transcrição de áudio.
-- Cliente desktop em estação gerenciada (exige ADR e novo parecer: hoje não existe segundo cliente, R65).
+- Cliente desktop: macOS descartado (ADR-0007); outro desktop só com ADR e novo parecer (R65).
 
 ---
 
 ## 6. Orientações para o desenvolvimento assistido (Claude Code)
 
-Para colocar no `CLAUDE.md` da raiz do repositório quando ele for criado:
-
-```markdown
-# Regras do projeto
-
-## Leitura obrigatória
-- docs/01-negocio-requisitos.md
-- docs/02-arquitetura-engenharia.md
-- docs/03-seguranca-homologacao-roadmap.md
-- docs/04-gestao-de-riscos.md
-- docs/05-vazamentos-incidentes-e-atribuicao.md
-- docs/06-lgpd-e-conformidade.md
-- docs/07-resistencia-a-clonagem-e-endurecimento-avancado.md
-- docs/08-informacao-classificada-e-nivel-inteligencia.md
-- docs/09-perfil-exercito-e-modelo-de-implantacao.md
-- docs/10-operacao-em-campo-por-radio.md
-
-## Regras que não podem ser quebradas
-1. Nenhuma primitiva ou protocolo criptográfico é implementado à mão.
-   Use as bibliotecas definidas em docs/02. Se faltar algo, pare e pergunte.
-2. Chaves privadas e chaves de sessão existem apenas em core/ (Rust).
-   Nunca atravessam a ponte para Kotlin ou TypeScript.
-3. O servidor (server/) nunca recebe, registra ou grava conteúdo em claro.
-   Nenhum log contém corpo de mensagem ou room_id em claro.
-4. app/src não usa localStorage, sessionStorage, IndexedDB nem fetch direto.
-   Todo acesso a dados e rede passa pelo plugin que fala com o core.
-5. Todo endpoint e todo tratador de mensagem verifica autorização por sala.
-6. Verificação de assinatura vem antes de qualquer gravação de estado.
-7. ai-node/ não grava arquivo em claro e não abre conexão de saída.
-8. Dependência nova exige justificativa no PR e versão fixada com hash.
-9. server/ é monólito modular: serviços só se falam por api/, sem importar internal/
-   de outro serviço, sem consultar tabela alheia e sem FK entre serviços.
-   Rode scripts/check-boundaries.sh antes de commitar mudanças no server/.
-10. Nenhum dado de produção em desenvolvimento ou teste. Nenhuma telemetria, serviço de
-    erro, push ou IA de terceiros. Dado pessoal de usuário só por rito documentado (docs/06).
-11. Nenhuma decisão contra pessoa é tomada automaticamente a partir de IA, marca d'água
-    ou integridade (docs/05). Mudança que altere o perfil de risco atualiza docs/04.
-12. Câmera: sem alerta, nenhum quadro é gravado nem enviado; com alerta, só imagens de evidência
-    cifradas para a chave de quórum (docs/07). Atestação sem Play Integrity nem serviço de terceiro.
-13. A instituição assume a privacidade dos usuários (docs/06 seção 0). Todo dado coletado sobre
-    agentes é cifrado, com acesso por rito e prazo, por segurança operacional.
-
-## Como trabalhar
-- Uma fase do roteiro por vez (docs/03, seção 5). Não adiantar fases.
-- Cada entrega vem com teste automatizado ligado ao critério de aceite.
-- Cenários de docs/03 seção 3 viram testes em tests/security quando automatizáveis.
-- Mudança que contrarie um ADR de docs/02 seção 11 ou de docs/adr exige novo ADR antes do código.
-- Em dúvida sobre segurança, escolher a opção mais restritiva e registrar a dúvida.
-```
+As regras do projeto (leitura obrigatória, regras 1 a 14 que não podem ser quebradas, como trabalhar) estão **só** no `CLAUDE.md` da raiz do repositório. Este documento não as copia, para não divergir: a cópia que havia aqui estava sem a regra 14 (D32, revisão de desenho da Fase 0). Mudança nas regras se faz no `CLAUDE.md`.
 
 ### 6.1 Uso de modelos de IA no desenvolvimento
 
@@ -498,7 +497,7 @@ Vale só para **escrever e revisar o código** do MIGDOL. No produto, a regra 10
 
 | Modelo | Esforço | Onde usar |
 |---|---|---|
-| **Claude Fable 5.2** (`claude-fable-5-2`) | `high` | **Revisão de desenho**, não volume: ADRs de criptografia e protocolo (0003 custódia e quórum, 0004 campo, ADR-0002 atestação, algoritmo de Estado como segunda camada); modelagem de ameaças por fase; revisão de segurança final antes da homologação de cada fase; análise de invariantes difíceis (épocas MLS, reconciliação campo–central, expurgo, escada de resposta) |
+| **Claude Fable 5.2** (`claude-fable-5-2`) | `high` | **Revisão de desenho**, não volume: ADRs de criptografia e protocolo (0003 custódia e quórum, 0004 campo, 0005 commits e bifurcação, 0006 lease, ADR-0002 atestação, algoritmo de Estado como segunda camada); modelagem de ameaças por fase; revisão de segurança final antes da homologação de cada fase; análise de invariantes difíceis (épocas MLS, reconciliação campo–central, expurgo, escada de resposta) |
 | **Claude Opus 5.5** (`claude-opus-5-5`) | `high` ou `xhigh` | **Implementação crítica** e revisão de todo PR de segurança: `core/` em Rust (MLS, HPKE, chaves, cache, lease, ordens assinadas); verificação de assinatura e autorização por sala no `server/` (regras 5 e 6); diretório, custódia, auditoria encadeada; plugins de segurança e câmera; nó de campo; verificador do pacote de instalação; testes de `tests/security` |
 | **Claude Sonnet 5.5** (`claude-sonnet-5-5`) | `medium` | **Volume:** interface React (`app/src`), código de apoio em Kotlin e Go sem decisão de segurança, painel administrativo (telas), testes de unidade e de integração comuns, documentação, scripts, manifestos YAML e runbooks |
 
