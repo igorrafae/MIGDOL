@@ -18,6 +18,8 @@ Formato: `NNNN-titulo.md` com Contexto, Decisão, Alternativas rejeitadas, Conse
 | 0009 | Controle de acesso por papéis com atributos (RBAC + ABAC) | proposta; decidir antes da Fase 1 |
 | 0010 | Investigação sigilosa de vazamento ou infiltrado | proposta (GD-16; GD-17 confirmada pela GD-23); terceira rodada; passe curto da quarta (`01h`): GD-21 (quórum em toda sessão), GD-22 (controle externo do rito), GD-23; 01g-G01 e G02 fechados no texto, a conferir pelo Fable só nesses pontos |
 
+| 0011 | Plataforma própria (hardware montado, SO e app próprios) depois da v1; linha civil separada | proposta, fora da v1 (doc 12) |
+
 ## Correspondência de numeração (D34)
 
 Os resumos do doc 02 seção 11 usam dois dígitos; os arquivos daqui usam quatro. **Não são a mesma série.**

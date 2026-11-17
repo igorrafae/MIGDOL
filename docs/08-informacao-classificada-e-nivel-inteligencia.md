@@ -82,6 +82,7 @@ Texto lido no [Planalto](https://www.planalto.gov.br/ccivil_03/_ato2011-2014/201
 - **Rede celular:** o chip expõe a localização do agente à operadora; ERB falsa (IMSI catcher) e baseband são vetores. Medidas: chip só de dados, sem número publicado; política de rede (4G/5G, sem 2G); avaliar aparelhos com isolamento de baseband.
 
 ### 4.3 Aparelho e sistema
+- Candidato a avaliar em D-R19, sem editar o SO na v1 (D-R48): Blackview Xplore 1 com rádio (doc 12 seção 5).
 - **Decisão D-R19: sistema e aparelho.** Sem serviços do Google (regra 10). Avaliar Android endurecido com bootloader travado com chave da instituição e compatibilidade com o MDM.
 - **Compra controlada:** cadeia de custódia do aparelho desde o fornecedor (risco de interceptação e implante na entrega); triagem (doc 07 seção 2).
 

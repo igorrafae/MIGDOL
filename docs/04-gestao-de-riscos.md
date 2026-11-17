@@ -104,6 +104,7 @@ O registro vive em `docs/riscos/registro.md` (ou ferramenta da instituição) e 
 | **D-R43** | Metas de tempo, erro e SUS definitivas do V09, formativas com amostra pequena (doc 11 seções 6.2, 6.5 e 6.8; antes U-2) | Responsável pelo produto, após a rodada 1; R120 |
 | **D-R44** | Termo de participação no teste de usabilidade, responsável pelo teste e rito do rosto real no teste facial (doc 11 seção 6.6; antes U-4; 01g-G18) | Jurídico e encarregado; R128 |
 | **D-R45** | Política de notificação por perfil: genérica ou nenhuma (doc 11 PI-2; antes U-6) | Segurança, com a chefia; R125 |
+| **D-R48 a D-R52** | Sem SO próprio na v1; plataforma própria como etapa C; separação institucional × civil; modelo de venda por etapa; parecer sobre conflito de interesse antes de proposta | Ver doc 12 seção 8; riscos R129–R134 |
 | **D-R46** | Texto aprovado das telas de trava, revogação e marca de custódia (doc 11; antes U-7) | Responsável pelo produto e jurídico; R122, R124 |
 | **D-R47** | Margem aceitável de diferença de tempo entre PIN normal e PIN de coação (doc 11 PI-4; parte da antiga U-3; a parte facial está na D-R40) | Segurança, com o jurídico; R121 |
 | **D-R28** | Orquestração da instalação: Compose ou systemd (proposta) ou Kubernetes | Segurança + infraestrutura da instituição; doc 02 seção 10.1 |
@@ -284,6 +285,17 @@ Correções em `docs/fase0/01h-correcoes-rodada4.md`. Riscos de usabilidade do d
 | R120–R128 | esta seção | **Novos:** usabilidade (doc 11) | GD-19; 01g seção 6 |
 
 ---
+
+### 5.6 Riscos de produto, hardware e contratação (doc 12, ADR-0011)
+
+| ID | Risco | P | I | Controles | Residual |
+|---|---|---|---|---|---|
+| R129 | Aparelho de fabricante estrangeiro sem atestação confiável ou com cadeia de suprimentos comprometida | Médio | Crítico | Lista de aparelhos homologados (D-R19); compra pela instituição; teste de atestação, StrongBox e boot antes da adoção | Médio |
+| R130 | SO próprio sem sustentação: correções de segurança atrasam ou param | Alto | Crítico | Sem SO próprio na v1 (D-R48); na etapa C, SoC com suporte longo, equipe de SO e prazo de correção em contrato | Médio (fora da v1) |
+| R131 | Conflito de interesse na contratação (fornecedor com vínculo funcional no órgão contratante) anula contrato ou gera improbidade | Médio | Alto | Parecer jurídico antes de qualquer proposta (D-R52) [conferir] | Médio até o parecer |
+| R132 | Fornecedor entra na cadeia de confiança ao entregar hardware provisionado ou guardar chaves de boot | Médio | Crítico | Chaves de boot, SO, HSM e quórum gerados e guardados pela instituição; fornecedor sem acesso à produção (RNF-T2, ADR-0011) | Baixo |
+| R133 | Linha civil no mesmo hardware revela o institucional por engenharia reversa | Médio | Alto | Regra de separação (D-R50): SO, chaves, app, repositório e servidores distintos; atestação institucional recusa aparelho civil | Baixo |
+| R134 | Montagem própria sem cadeia de custódia física permite implante de hardware | Baixo | Crítico | Compra rastreada, inspeção, montagem e provisionamento em ambiente controlado, registro por série, red team de hardware (V12) | Médio |
 
 ## 6. Controles organizacionais exigidos
 
